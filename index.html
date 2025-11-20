@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AI Path</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0f172a">
+    
+    <!-- Tailwind & React -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- EMBEDDED APP ICON (This makes the icon appear on your home screen) -->
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='120' fill='%230f172a'/%3E%3Cpath d='M256 120C180.9 120 120 180.9 120 256s60.9 136 136 136 136-60.9 136-136-60.9-136-136-136zm0 232c-53 0-96-43-96-96s43-96 96-96 96 43 96 96-43 96-96 96z' fill='%23334155'/%3E%3Ccircle cx='256' cy='186' r='24' fill='%233b82f6'/%3E%3Ccircle cx='186' cy='296' r='24' fill='%2310b981'/%3E%3Ccircle cx='326' cy='296' r='24' fill='%238b5cf6'/%3E%3Cpath d='M256 186L186 296M256 186L326 296M186 296H326' stroke='white' stroke-width='12' stroke-linecap='round'/%3E%3C/svg%3E">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='120' fill='%230f172a'/%3E%3Cpath d='M256 120C180.9 120 120 180.9 120 256s60.9 136 136 136 136-60.9 136-136-60.9-136-136-136zm0 232c-53 0-96-43-96-96s43-96 96-96 96 43 96 96-43 96-96 96z' fill='%23334155'/%3E%3Ccircle cx='256' cy='186' r='24' fill='%233b82f6'/%3E%3Ccircle cx='186' cy='296' r='24' fill='%2310b981'/%3E%3Ccircle cx='326' cy='296' r='24' fill='%238b5cf6'/%3E%3Cpath d='M256 186L186 296M256 186L326 296M186 296H326' stroke='white' stroke-width='12' stroke-linecap='round'/%3E%3C/svg%3E">
+
+    <style>
+        /* Mobile Optimization */
+        body { overscroll-behavior-y: contain; -webkit-tap-highlight-color: transparent; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        /* Smooth transitions */
+        .transition-all { transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 300ms; }
+    </style>
+</head>
+<body class="bg-slate-50 select-none">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // --- Icons ---
+        const Icon = ({ path, color = "currentColor", className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                {path}
+            </svg>
+        );
+
+        const Icons = {
+            Coffee: (props) => <Icon {...props} path={<><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></>} />,
+            Moon: (props) => <Icon {...props} path={<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />} />,
+            Bell: (props) => <Icon {...props} path={<><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></>} />,
+            CheckCircle: (props) => <Icon {...props} path={<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>} />,
+            Play: (props) => <Icon {...props} path={<circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" />} />,
+            Book: (props) => <Icon {...props} path={<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />} />,
+            Code: (props) => <Icon {...props} path={<polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18" />} />,
+        };
+
+        // --- Data ---
+        const curriculum = [
+            {
+                phase: "Phase 1: Foundation",
+                duration: "Weeks 1-4",
+                description: "Math & Python Basics. Don't skip the Linear Algebra!",
+                weeks: [
+                    { week: 1, title: "Python & Algebra", morning: { topic: "Linear Algebra (Vectors)", material: "3Blue1Brown: Essence of LA", type: "Video" }, evening: { topic: "Numpy/Pandas", material: "Python Data Science Handbook", type: "Reading" } },
+                    { week: 2, title: "Calculus Basics", morning: { topic: "Derivatives & Gradients", material: "Khan Academy / Andrew Ng", type: "Video" }, evening: { topic: "Probability", material: "StatQuest Videos", type: "Reading" } },
+                    { week: 3, title: "Data Viz", morning: { topic: "Feature Engineering", material: "Kaggle Courses", type: "Video" }, evening: { topic: "Matplotlib/Seaborn", material: "Kaggle Notebooks", type: "Code" } },
+                    { week: 4, title: "Classic ML", morning: { topic: "Regression/Trees", material: "Andrew Ng ML Specialization", type: "Video" }, evening: { topic: "Scikit-Learn APIs", material: "Scikit-Learn Documentation", type: "Reading" } }
+                ]
+            },
+            {
+                phase: "Phase 2: Deep Learning",
+                duration: "Weeks 5-8",
+                description: "Neural Networks. The core of modern AI.",
+                weeks: [
+                    { week: 5, title: "Neural Nets", morning: { topic: "Backpropagation", material: "Deep Learning Specialization C1", type: "Video" }, evening: { topic: "NN from Scratch", material: "Karpathy 'Micrograd'", type: "Code" } },
+                    { week: 6, title: "Optimization", morning: { topic: "Adam/Dropout/Batch", material: "Deep Learning Specialization C2", type: "Video" }, evening: { topic: "PyTorch Basics", material: "PyTorch 60min Blitz", type: "Reading" } },
+                    { week: 7, title: "CNNs (Vision)", morning: { topic: "Convolutions & ResNet", material: "CS231n Stanford", type: "Video" }, evening: { topic: "AlexNet/ResNet Papers", material: "Read Arxiv Papers", type: "Reading" } },
+                    { week: 8, title: "RNNs (Seq)", morning: { topic: "RNNs & LSTMs", material: "CS224n NLP", type: "Video" }, evening: { topic: "Sequence DataLoaders", material: "PyTorch NLP Docs", type: "Reading" } }
+                ]
+            },
+            {
+                phase: "Phase 3: LLMs & Transformers",
+                duration: "Weeks 9-16",
+                description: "Transformers. The key to FAANG jobs.",
+                weeks: [
+                    { week: 9, title: "Attention", morning: { topic: "Self-Attention Mech", material: "Attention Is All You Need", type: "Video" }, evening: { topic: "The Paper", material: "Read Vaswani 2017 Paper", type: "Reading" } },
+                    { week: 10, title: "BERT", morning: { topic: "Encoders/Masking", material: "Hugging Face Course Ch.1", type: "Video" }, evening: { topic: "HF Transformers", material: "Hugging Face Docs", type: "Code" } },
+                    { week: 11, title: "GPT", morning: { topic: "Decoders/Causal LM", material: "Karpathy 'Build GPT'", type: "Video" }, evening: { topic: "NanoGPT Repo", material: "Code Review", material: "Code" } },
+                    { week: 12, title: "Fine-Tuning", morning: { topic: "LoRA & PEFT", material: "Tim Dettmers Blog", type: "Video" }, evening: { topic: "LoRA Paper", material: "Read LoRA Paper", type: "Reading" } }
+                ]
+            },
+            {
+                phase: "Phase 4: FAANG Prep",
+                duration: "Weeks 17-24",
+                description: "System Design & MLOps.",
+                weeks: [
+                    { week: 17, title: "RAG Systems", morning: { topic: "Vector DBs", material: "DeepLearning.AI Courses", type: "Video" }, evening: { topic: "LangChain", material: "LangChain Docs", type: "Reading" } },
+                    { week: 18, title: "MLOps", morning: { topic: "Model Serving", material: "Full Stack DL Course", type: "Video" }, evening: { topic: "TorchServe", material: "Serving Docs", type: "Reading" } },
+                    { week: 20, title: "System Design", morning: { topic: "RecSys Design", material: "Alex Xu / Chip Huyen", type: "Video" }, evening: { topic: "Netflix/Uber Blogs", material: "Eng Blogs", type: "Reading" } },
+                    { week: 24, title: "Interviews", morning: { topic: "Algorithms", material: "LeetCode Top 150", type: "Video" }, evening: { topic: "Mock Design", material: "Design YouTube Recs", type: "Code" } }
+                ]
+            }
+        ];
+
+        function App() {
+            const [completedWeeks, setCompletedWeeks] = useState(() => {
+                const saved = localStorage.getItem('ai_tracker_progress');
+                return saved ? JSON.parse(saved) : [];
+            });
+            
+            const [currentWeek, setCurrentWeek] = useState(() => {
+                const saved = localStorage.getItem('ai_tracker_week');
+                return saved ? parseInt(saved) : 0;
+            });
+
+            const [activeSession, setActiveSession] = useState(null);
+            const allWeeks = curriculum.flatMap(phase => phase.weeks);
+
+            useEffect(() => {
+                localStorage.setItem('ai_tracker_progress', JSON.stringify(completedWeeks));
+                localStorage.setItem('ai_tracker_week', currentWeek.toString());
+            }, [completedWeeks, currentWeek]);
+
+            useEffect(() => {
+                const checkTime = () => {
+                    const hour = new Date().getHours();
+                    if (hour >= 11 && hour < 13) setActiveSession('Morning');
+                    else if (hour >= 18 && hour < 20) setActiveSession('Evening');
+                    else setActiveSession(null);
+                };
+                checkTime();
+                const interval = setInterval(checkTime, 60000);
+                return () => clearInterval(interval);
+            }, []);
+
+            const toggleWeekCompletion = (weekIndex) => {
+                if (completedWeeks.includes(weekIndex)) {
+                    setCompletedWeeks(completedWeeks.filter(w => w !== weekIndex));
+                } else {
+                    setCompletedWeeks([...completedWeeks, weekIndex]);
+                    if (weekIndex === currentWeek && currentWeek < allWeeks.length - 1) {
+                        setTimeout(() => setCurrentWeek(curr => curr + 1), 500);
+                    }
+                }
+            };
+
+            const progress = Math.round((completedWeeks.length / allWeeks.length) * 100);
+            const currentWeekData = allWeeks[currentWeek];
+            const currentPhase = curriculum.find(p => p.weeks.some(w => w.week === currentWeekData.week));
+
+            return (
+                <div className="min-h-screen pb-10">
+                    {/* Header */}
+                    <div className="bg-slate-900 text-white p-6 pb-12 rounded-b-[2.5rem] shadow-xl">
+                        <div className="flex justify-between items-start mb-6">
+                            <div>
+                                <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-emerald-400">AI Path</h1>
+                                <p className="text-slate-400 text-xs mt-1">Full Stack to FAANG</p>
+                            </div>
+                            <div className="bg-slate-800 px-3 py-2 rounded-xl text-center min-w-[60px]">
+                                <div className="text-[10px] text-slate-400 uppercase">Progress</div>
+                                <div className="text-xl font-bold text-emerald-400">{progress}%</div>
+                            </div>
+                        </div>
+                        <div className="w-full bg-slate-800 rounded-full h-2">
+                            <div className="bg-gradient-to-r from-blue-500 to-emerald-500 h-2 rounded-full transition-all duration-1000" style={{ width: `${progress}%` }}></div>
+                        </div>
+                    </div>
+
+                    <div className="px-5 -mt-8">
+                        {/* Reminder Card */}
+                        <div className={`p-4 rounded-2xl border-l-4 mb-6 shadow-lg backdrop-blur-sm transition-all ${
+                            activeSession ? 'bg-white border-blue-500 scale-105' : 'bg-white/90 border-slate-300 opacity-90'
+                        }`}>  
+                            <div className="flex justify-between items-center mb-2">
+                                <div className="flex items-center gap-2 font-bold text-slate-800">
+                                    {activeSession === 'Morning' ? <Icons.Coffee className="w-5 h-5 text-orange-500"/> : <Icons.Moon className="w-5 h-5 text-indigo-500"/>}
+                                    {activeSession || "Next Session"}
+                                </div>
+                                <div className="text-xs font-mono bg-slate-100 px-2 py-1 rounded text-slate-600 flex items-center gap-1">
+                                    <Icons.Bell className="w-3 h-3}/> {activeSession === 'Morning' ? '11:00' : '18:00'}
+                                </div>
+                            </div>
+                            <p className="text-sm text-slate-500">
+                                {activeSession ? "It's learning time. Open your laptop." : "Relax. Next session starts later."}
+                            </p>
+                        </div>
+
+                        {/* Main Module Card */}
+                        <div className="flex justify-between items-end mb-3 px-1">
+                            <div>
+                                <h2 className="text-lg font-bold text-slate-800">Current Week</h2>
+                                <p className="text-xs text-slate-500 font-semibold uppercase">{currentPhase.phase}</p>
+                            </div>
+                            <div className="flex gap-2">
+                                <button onClick={() => setCurrentWeek(Math.max(0, currentWeek - 1))} className="p-2 bg-white rounded-lg shadow-sm border border-slate-100 active:scale-95">←</button>
+                                <button onClick={() => setCurrentWeek(Math.min(allWeeks.length - 1, currentWeek + 1))} className="p-2 bg-white rounded-lg shadow-sm border border-slate-100 active:scale-95">→</button>
+                            </div>
+                        </div>
+
+                        <div className="bg-white rounded-3xl shadow-xl shadow-slate-200/50 overflow-hidden border border-slate-100 mb-8">
+                            <div className="bg-slate-50 p-5 border-b border-slate-100 flex justify-between items-center">
+                                <div>
+                                    <div className="text-xs font-bold text-blue-600 uppercase tracking-wider">Week {currentWeekData.week}</div>
+                                    <h3 className="font-bold text-slate-800 text-lg">{currentWeekData.title}</h3>
+                                </div>
+                                <button onClick={() => toggleWeekCompletion(currentWeek)} className={`rounded-full p-3 transition-colors ${completedWeeks.includes(currentWeek) ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-100 text-slate-300'}`}>  
+                                    <Icons.CheckCircle className="w-6 h-6" />
+                                </button>
+                            </div>
+
+                            <div className="p-5 space-y-6">
+                                {/* Morning */}
+                                <div className="flex gap-4">
+                                    <div className="mt-1"><div className="bg-orange-100 p-2 rounded-xl text-orange-600"><Icons.Play className="w-5 h-5"/></div></div>
+                                    <div>
+                                        <div className="text-[10px] font-bold text-slate-400 uppercase mb-1">Morning (Theory)</div>
+                                        <div className="font-bold text-slate-800 leading-tight mb-1">{currentWeekData.morning.topic}</div>
+                                        <div className="text-sm text-slate-500 leading-snug">{currentWeekData.morning.material}</div>
+                                    </div>
+                                </div>
+
+                                <div className="w-full h-px bg-slate-50"></div>
+
+                                {/* Evening */}
+                                <div className="flex gap-4">
+                                    <div className="mt-1"><div className="bg-indigo-100 p-2 rounded-xl text-indigo-600">
+                                        {currentWeekData.evening.type === 'Code' ? <Icons.Code className="w-5 h-5"/> : <Icons.Book className="w-5 h-5"/>}
+                                    </div></div>
+                                    <div>
+                                        <div className="text-[10px] font-bold text-slate-400 uppercase mb-1">Evening (Application)</div>
+                                        <div className="font-bold text-slate-800 leading-tight mb-1">{currentWeekData.evening.topic}</div>
+                                        <div className="text-sm text-slate-500 leading-snug">{currentWeekData.evening.material}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
