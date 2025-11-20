@@ -11,7 +11,6 @@
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     
-    <!-- App Icon -->
     <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='120' fill='%230f172a'/%3E%3Cpath d='M256 120C180.9 120 120 180.9 120 256s60.9 136 136 136 136-60.9 136-136-60.9-136-136-136zm0 232c-53 0-96-43-96-96s43-96 96-96 96 43 96 96-43 96-96 96z' fill='%23334155'/%3E%3Ccircle cx='256' cy='186' r='24' fill='%233b82f6'/%3E%3Ccircle cx='186' cy='296' r='24' fill='%2310b981'/%3E%3Ccircle cx='326' cy='296' r='24' fill='%238b5cf6'/%3E%3Cpath d='M256 186L186 296M256 186L326 296M186 296H326' stroke='white' stroke-width='12' stroke-linecap='round'/%3E%3C/svg%3E">
 
     <style>
@@ -27,6 +26,7 @@
     <script type="text/babel">
         const { useState, useEffect } = React;
 
+        // Icons
         const Icon = ({ d, className, color }) => (
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} style={{color}}>
                 <path d={d} />
@@ -45,7 +45,7 @@
             Calendar: (p) => <Icon {...p} d="M19 4H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zM16 2v4M8 2v4M3 10h18" />
         };
 
-        // --- CURRICULUM DATA ---
+        // --- DATA ---
         const fullCurriculum = [
             {
                 title: "Week 1: Linear Algebra & Python",
@@ -95,7 +95,6 @@
                     { d: "Sat", m: {t: "Bias vs Variance", l: "https://www.youtube.com/watch?v=EuBBz3bI-aA", type: "Video"}, e: {t: "Grid Search CV", l: "https://scikit-learn.org/stable/modules/grid_search.html", type: "Code"} },
                 ]
             },
-            // PHASE 2: DEEP LEARNING
             {
                 title: "Week 5: Neural Networks",
                 desc: "Perceptrons to Deep Nets",
@@ -144,7 +143,6 @@
                     { d: "Sat", m: {t: "Karpathy makemore", l: "https://www.youtube.com/watch?v=PaCmpygFfXo", type: "Video"}, e: {t: "Build a Name Gen", l: "https://github.com/karpathy/makemore", type: "Code"} },
                 ]
             },
-            // PHASE 3: LLMs & TRANSFORMERS
             {
                 title: "Week 9: Attention Mechanism",
                 desc: "The birth of Transformers",
@@ -193,7 +191,6 @@
                     { d: "Sat", m: {t: "Fine-tune Llama", l: "https://www.youtube.com/watch?v=Q9zv369Ggfk", type: "Video"}, e: {t: "Run Llama locally", l: "https://github.com/ggerganov/llama.cpp", type: "Code"} },
                 ]
             },
-            // PHASE 4: PRODUCTION & SYSTEM DESIGN
             {
                 title: "Week 13: RAG & Vector DBs",
                 desc: "Retrieval Augmented Generation",
@@ -267,36 +264,31 @@
                 else setCompleted(c => [...c, id]);
             }
 
-            // --- NEW: ONE-CLICK SYNC (ICS Generation) ---
+            // --- ONE-CLICK SYNC (ICS Generation) ---
             const downloadICS = () => {
                 const events = [];
                 const now = new Date();
                 
-                // Find the next Monday (or today if today is Monday) to start the schedule
                 const startDate = new Date(now);
                 const day = startDate.getDay();
-                const diff = startDate.getDate() - day + (day == 0 ? -6 : 1); // Adjust when day is Sunday
+                const diff = startDate.getDate() - day + (day == 0 ? -6 : 1); 
                 startDate.setDate(diff);
-                if (startDate < new Date().setHours(0,0,0,0)) startDate.setDate(startDate.getDate() + 7); // If Monday was in past, move to next week
+                if (startDate < new Date().setHours(0,0,0,0)) startDate.setDate(startDate.getDate() + 7); 
 
-                // Loop through the 6 days of the curriculum
                 currentWeek.days.forEach((dayData, index) => {
                     const eventDate = new Date(startDate);
-                    eventDate.setDate(startDate.getDate() + index); // Add days (Mon, Tue, Wed...)
+                    eventDate.setDate(startDate.getDate() + index);
 
-                    // Helper to format ICS date
                     const formatDate = (date, hour) => {
                         const d = new Date(date);
                         d.setHours(hour, 0, 0, 0);
                         return d.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
                     };
 
-                    // Morning Event (11:00 AM)
                     events.push(
                         `BEGIN:VEVENT\nSUMMARY:AI Study: ${dayData.m.t}\nDTSTART:${formatDate(eventDate, 11)}\nDTEND:${formatDate(eventDate, 13)}\nDESCRIPTION:Link: ${dayData.m.l}\nEND:VEVENT`
                     );
 
-                    // Evening Event (6:00 PM)
                     events.push(
                         `BEGIN:VEVENT\nSUMMARY:AI Lab: ${dayData.e.t}\nDTSTART:${formatDate(eventDate, 18)}\nDTEND:${formatDate(eventDate, 20)}\nDESCRIPTION:Link: ${dayData.e.l}\nEND:VEVENT`
                     );
@@ -339,21 +331,26 @@
                             </div>
                         </div>
 
-                        {/* Week Nav & Sync Button */}
-                        <div className="flex gap-2 mb-2">
-                             <div className="flex flex-1 items-center justify-between bg-slate-800/80 p-2 rounded-2xl backdrop-blur-xl border border-slate-700 shadow-inner">
-                                <button onClick={() => setWeekIdx(Math.max(0, weekIdx - 1))} className="p-3 hover:bg-slate-700 rounded-xl transition-all disabled:opacity-30"><Icons.Left className="w-6 h-6" /></button>
-                                <div className="text-center flex-1 px-2">
-                                    <div className="font-bold text-sm text-slate-100 leading-tight truncate">{currentWeek.title}</div>
-                                </div>
-                                <button onClick={() => setWeekIdx(Math.min(fullCurriculum.length - 1, weekIdx + 1))} className="p-3 hover:bg-slate-700 rounded-xl transition-all disabled:opacity-30"><Icons.Right className="w-6 h-6" /></button>
-                            </div>
-                            <button onClick={downloadICS} className="bg-blue-600 text-white px-4 rounded-2xl font-bold text-xs flex flex-col items-center justify-center hover:bg-blue-500 active:scale-95 transition-all shadow-lg shadow-blue-900/50">
-                                <Icons.Calendar className="w-5 h-5 mb-1"/>
-                                Sync Week
+                        {/* *** NEW DEDICATED SYNC ROW *** */}
+                        <div className="mb-4">
+                             <button 
+                                onClick={downloadICS} 
+                                className="w-full bg-gradient-to-r from-orange-500 to-amber-500 text-white py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-orange-900/30 active:scale-95 transition-all"
+                             >
+                                <Icons.Calendar className="w-5 h-5"/>
+                                Sync This Week's Schedule
                             </button>
                         </div>
-                        <div className="text-[10px] text-slate-400 text-center">{currentWeek.desc}</div>
+
+                        {/* Week Nav */}
+                        <div className="flex items-center justify-between bg-slate-800/80 p-2 rounded-2xl backdrop-blur-xl border border-slate-700 shadow-inner">
+                            <button onClick={() => setWeekIdx(Math.max(0, weekIdx - 1))} className="p-3 hover:bg-slate-700 rounded-xl transition-all disabled:opacity-30"><Icons.Left className="w-6 h-6" /></button>
+                            <div className="text-center flex-1 px-2">
+                                <div className="font-bold text-sm text-slate-100 leading-tight">{currentWeek.title}</div>
+                                <div className="text-[10px] text-slate-400 uppercase tracking-widest mt-1">{currentWeek.desc}</div>
+                            </div>
+                            <button onClick={() => setWeekIdx(Math.min(fullCurriculum.length - 1, weekIdx + 1))} className="p-3 hover:bg-slate-700 rounded-xl transition-all disabled:opacity-30"><Icons.Right className="w-6 h-6" /></button>
+                        </div>
                     </div>
 
                     {/* Content */}
@@ -422,5 +419,4 @@
     </script>
 </body>
 </html>
-
 
