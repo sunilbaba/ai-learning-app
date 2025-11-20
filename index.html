@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FAANG AI Path</title>
+    <title>FAANG Path</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#0f172a">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -14,10 +15,10 @@
     <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='120' fill='%230f172a'/%3E%3Cpath d='M256 120C180.9 120 120 180.9 120 256s60.9 136 136 136 136-60.9 136-136-60.9-136-136-136zm0 232c-53 0-96-43-96-96s43-96 96-96 96 43 96 96-43 96-96 96z' fill='%23334155'/%3E%3Ccircle cx='256' cy='186' r='24' fill='%233b82f6'/%3E%3Ccircle cx='186' cy='296' r='24' fill='%2310b981'/%3E%3Ccircle cx='326' cy='296' r='24' fill='%238b5cf6'/%3E%3Cpath d='M256 186L186 296M256 186L326 296M186 296H326' stroke='white' stroke-width='12' stroke-linecap='round'/%3E%3C/svg%3E">
 
     <style>
-        body { overscroll-behavior-y: contain; -webkit-tap-highlight-color: transparent; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc; }
+        body { overscroll-behavior-y: contain; -webkit-tap-highlight-color: transparent; font-family: sans-serif; background-color: #f8fafc; }
+        .pb-safe { padding-bottom: 100px; }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
     </style>
 </head>
 <body>
@@ -26,378 +27,213 @@
     <script type="text/babel">
         const { useState, useEffect } = React;
 
-        // Icons
-        const Icon = ({ d, className, color }) => (
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} style={{color}}>
+        // --- ICONS ---
+        const Icon = ({ d, className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
                 <path d={d} />
             </svg>
         );
+
         const Icons = {
-            Sun: (p) => <Icon {...p} d="M12 3v2m0 14v2m9-9h-2M5 12H3m15.364-6.364l-1.414 1.414M7.05 7.05L5.636 5.636m12.728 12.728l-1.414-1.414M7.05 16.95l-1.414 1.414M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z" />,
-            Moon: (p) => <Icon {...p} d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />,
-            Check: (p) => <Icon {...p} d="M20 6L9 17l-5-5" />,
-            Left: (p) => <Icon {...p} d="M15 18l-6-6 6-6" />,
-            Right: (p) => <Icon {...p} d="M9 18l6-6-6-6" />,
-            Youtube: (p) => <svg {...p} viewBox="0 0 24 24" fill="#FF0000" stroke="none"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>,
-            Book: (p) => <Icon {...p} d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />,
-            Alarm: (p) => <Icon {...p} d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0" />,
-            ExtLink: (p) => <Icon {...p} d="M10 6H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4M14 4h6m0 0v6m0-6L10 14" />,
-            Calendar: (p) => <Icon {...p} d="M19 4H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zM16 2v4M8 2v4M3 10h18" />
+            Sun: () => <Icon className="w-4 h-4" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M16.95 17.657l.707.707M6.343 6.343l.707.707M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z" />,
+            Moon: () => <Icon className="w-4 h-4" d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />,
+            Play: () => <Icon className="w-4 h-4" d="M5 3l14 9-14 9V3z" />,
+            Stop: () => <Icon className="w-4 h-4" d="M6 4h12v16H6z" />,
+            Check: () => <Icon className="w-6 h-6" d="M20 6L9 17l-5-5" />,
+            Left: () => <Icon className="w-5 h-5" d="M15 18l-6-6 6-6" />,
+            Right: () => <Icon className="w-5 h-5" d="M9 18l6-6-6-6" />,
+            Alarm: () => <Icon className="w-5 h-5" d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0" />,
+            Calendar: () => <Icon className="w-5 h-5" d="M19 4H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zM16 2v4M8 2v4M3 10h18" />
         };
 
-        const fullCurriculum = [
+        // --- DATA ---
+        const curriculum = [
             {
-                title: "Week 1: Linear Algebra & Python",
-                desc: "Vectors, Matrices & Numpy",
+                title: "Week 1: Linear Algebra",
                 days: [
-                    { d: "Day 1", m: {t: "Vectors & Spaces", l: "https://www.youtube.com/watch?v=fNk_zzaMoSs", type: "Video"}, e: {t: "Numpy Arrays", l: "https://jakevdp.github.io/PythonDataScienceHandbook/02.01-understanding-data-types.html", type: "Read"} },
-                    { d: "Day 2", m: {t: "Dot Products", l: "https://www.youtube.com/watch?v=LyGKycYT2v0", type: "Video"}, e: {t: "Numpy Computation", l: "https://jakevdp.github.io/PythonDataScienceHandbook/02.03-computation-on-arrays-ufuncs.html", type: "Read"} },
-                    { d: "Day 3", m: {t: "Matrices as Transforms", l: "https://www.youtube.com/watch?v=kYB8IZa5AuE", type: "Video"}, e: {t: "Pandas Basics", l: "https://jakevdp.github.io/PythonDataScienceHandbook/03.01-introducing-pandas-objects.html", type: "Read"} },
-                    { d: "Day 4", m: {t: "Determinants", l: "https://www.youtube.com/watch?v=Ip3X9LOh2dk", type: "Video"}, e: {t: "Data Indexing", l: "https://jakevdp.github.io/PythonDataScienceHandbook/03.02-data-indexing-and-selection.html", type: "Read"} },
-                    { d: "Day 5", m: {t: "Eigenvectors", l: "https://www.youtube.com/watch?v=PFDu9oVAE-g", type: "Video"}, e: {t: "Handling Missing Data", l: "https://jakevdp.github.io/PythonDataScienceHandbook/03.04-missing-values.html", type: "Read"} },
-                    { d: "Day 6", m: {t: "Review: LA for ML", l: "https://www.coursera.org/learn/machine-learning-linear-algebra", type: "Video"}, e: {t: "Kaggle Titanic Practice", l: "https://kaggle.com/competitions/titanic", type: "Code"} },
+                    { d: "Mon", m: {t: "Vectors", l: "https://youtu.be/fNk_zzaMoSs", sum: "Vectors are arrays of numbers. They represent coordinates in space." }, e: {t: "Numpy Arrays", l: "https://jakevdp.github.io/PythonDataScienceHandbook/02.01-understanding-data-types.html", sum: "Numpy arrays are faster than lists. Use them for math operations."} },
+                    { d: "Tue", m: {t: "Dot Products", l: "https://youtu.be/LyGKycYT2v0", sum: "Dot products measure similarity between two vectors." }, e: {t: "Numpy Math", l: "https://jakevdp.github.io/PythonDataScienceHandbook/02.03-computation-on-arrays-ufuncs.html", sum: "Use broadcasting to add numbers to arrays without loops."} },
+                    { d: "Wed", m: {t: "Matrices", l: "https://youtu.be/kYB8IZa5AuE", sum: "Matrices transform space. They can rotate or stretch vectors." }, e: {t: "Pandas Basics", l: "https://jakevdp.github.io/PythonDataScienceHandbook/03.01-introducing-pandas-objects.html", sum: "Pandas DataFrames are like Excel sheets for Python code."} },
+                    { d: "Thu", m: {t: "Determinants", l: "https://youtu.be/Ip3X9LOh2dk", sum: "Determinants tell you how much a matrix scales area." }, e: {t: "Data Selection", l: "https://jakevdp.github.io/PythonDataScienceHandbook/03.02-data-indexing-and-selection.html", sum: "Use .loc and .iloc to select rows and columns efficiently."} },
+                    { d: "Fri", m: {t: "Eigenvectors", l: "https://youtu.be/PFDu9oVAE-g", sum: "Eigenvectors don't get knocked off their span during transformation." }, e: {t: "Missing Data", l: "https://jakevdp.github.io/PythonDataScienceHandbook/03.04-missing-values.html", sum: "Fill missing data (NaN) with mean or median values."} },
+                    { d: "Sat", m: {t: "Review", l: "https://www.coursera.org/learn/machine-learning-linear-algebra", sum: "Review vectors, matrices, and dot products today." }, e: {t: "Practice", l: "https://kaggle.com", sum: "Try the Titanic dataset on Kaggle."} },
                 ]
             },
             {
-                title: "Week 2: Calculus & Probability",
-                desc: "Gradients, Chain Rule & Stats",
+                title: "Week 2: Calculus",
                 days: [
-                    { d: "Day 1", m: {t: "Derivatives Visualized", l: "https://www.youtube.com/watch?v=WUvTyaaNkzM", type: "Video"}, e: {t: "Probability Intro", l: "https://seeing-theory.brown.edu/basic-probability/index.html", type: "Read"} },
-                    { d: "Day 2", m: {t: "The Chain Rule", l: "https://www.youtube.com/watch?v=YG15m2VwSjA", type: "Video"}, e: {t: "Distributions (Normal/Binomial)", l: "https://seeing-theory.brown.edu/probability-distributions/index.html", type: "Read"} },
-                    { d: "Day 3", m: {t: "Gradient Descent", l: "https://www.youtube.com/watch?v=IHZwWFHWa-w", type: "Video"}, e: {t: "Bayes Theorem", l: "https://seeing-theory.brown.edu/bayesian-inference/index.html", type: "Read"} },
-                    { d: "Day 4", m: {t: "Backprop Calculus", l: "https://www.youtube.com/watch?v=tIeHLnjs5U8", type: "Video"}, e: {t: "Scikit-Learn Stats", l: "https://scikit-learn.org/stable/tutorial/statistical_inference/index.html", type: "Read"} },
-                    { d: "Day 5", m: {t: "Multivariate Calc", l: "https://www.khanacademy.org/math/multivariable-calculus", type: "Video"}, e: {t: "Expectation & Variance", l: "https://www.scribbr.com/statistics/variance/", type: "Read"} },
-                    { d: "Day 6", m: {t: "Calculus Review", l: "https://www.coursera.org/learn/multivariate-calculus-machine-learning", type: "Video"}, e: {t: "Implement Gradient Descent", l: "https://towardsdatascience.com/implement-gradient-descent-in-python-9b93ed7108d1", type: "Code"} },
-                ]
-            },
-            {
-                title: "Week 3: Data Viz & Preprocessing",
-                desc: "EDA, Matplotlib & Feature Eng",
-                days: [
-                    { d: "Day 1", m: {t: "Data Viz Principles", l: "https://www.youtube.com/watch?v=fSgEeI2XkLI", type: "Video"}, e: {t: "Matplotlib Guide", l: "https://jakevdp.github.io/PythonDataScienceHandbook/04.00-introduction-to-matplotlib.html", type: "Read"} },
-                    { d: "Day 2", m: {t: "Seaborn Tutorial", l: "https://www.youtube.com/watch?v=6GUZXDef2U0", type: "Video"}, e: {t: "Seaborn Gallery", l: "https://seaborn.pydata.org/examples/index.html", type: "Read"} },
-                    { d: "Day 3", m: {t: "Feature Engineering", l: "https://www.youtube.com/watch?v=q8ad8e-U_wM", type: "Video"}, e: {t: "Categorical Encoding", l: "https://pbpython.com/categorical-encoding.html", type: "Read"} },
-                    { d: "Day 4", m: {t: "Dimensionality Reduction", l: "https://www.youtube.com/watch?v=FgakZw6K1QQ", type: "Video"}, e: {t: "PCA Explained", l: "https://jakevdp.github.io/PythonDataScienceHandbook/05.09-principal-component-analysis.html", type: "Read"} },
-                    { d: "Day 5", m: {t: "Data Cleaning Strategies", l: "https://www.youtube.com/watch?v=Xl16M12C2p0", type: "Video"}, e: {t: "Imputation Techniques", l: "https://scikit-learn.org/stable/modules/impute.html", type: "Read"} },
-                    { d: "Day 6", m: {t: "Exploratory Analysis", l: "https://www.kaggle.com/code/pmarcelino/comprehensive-data-exploration-with-python", type: "Read"}, e: {t: "EDA on Housing Data", l: "https://www.kaggle.com/competitions/house-prices-advanced-regression-techniques", type: "Code"} },
-                ]
-            },
-            {
-                title: "Week 4: Classic ML Algorithms",
-                desc: "Regression, Trees & SVMs",
-                days: [
-                    { d: "Day 1", m: {t: "Linear Regression", l: "https://www.youtube.com/watch?v=nk2CQukm59s", type: "Video"}, e: {t: "Sklearn Linear Model", l: "https://scikit-learn.org/stable/modules/linear_model.html", type: "Read"} },
-                    { d: "Day 2", m: {t: "Logistic Regression", l: "https://www.youtube.com/watch?v=yIYKR4sgzI8", type: "Video"}, e: {t: "Evaluation Metrics", l: "https://scikit-learn.org/stable/modules/model_evaluation.html", type: "Read"} },
-                    { d: "Day 3", m: {t: "Decision Trees", l: "https://www.youtube.com/watch?v=7VeUPuFGJHk", type: "Video"}, e: {t: "Tree Algorithms", l: "https://scikit-learn.org/stable/modules/tree.html", type: "Read"} },
-                    { d: "Day 4", m: {t: "Random Forests", l: "https://www.youtube.com/watch?v=J4Wdy0Wc_xQ", type: "Video"}, e: {t: "Ensemble Methods", l: "https://scikit-learn.org/stable/modules/ensemble.html", type: "Read"} },
-                    { d: "Day 5", m: {t: "SVM & Kernels", l: "https://www.youtube.com/watch?v=efR1C6CvhmE", type: "Video"}, e: {t: "SVM Docs", l: "https://scikit-learn.org/stable/modules/svm.html", type: "Read"} },
-                    { d: "Day 6", m: {t: "Bias vs Variance", l: "https://www.youtube.com/watch?v=EuBBz3bI-aA", type: "Video"}, e: {t: "Grid Search CV", l: "https://scikit-learn.org/stable/modules/grid_search.html", type: "Code"} },
-                ]
-            },
-            // PHASE 2: DEEP LEARNING
-            {
-                title: "Week 5: Neural Networks",
-                desc: "Perceptrons to Deep Nets",
-                days: [
-                    { d: "Day 1", m: {t: "What is a NN?", l: "https://www.youtube.com/watch?v=aircAruvnKk", type: "Video"}, e: {t: "The Perceptron", l: "https://news.mit.edu/2017/explained-neural-networks-deep-learning-0414", type: "Read"} },
-                    { d: "Day 2", m: {t: "Activation Functions", l: "https://www.youtube.com/watch?v=m0pIlLfpXWE", type: "Video"}, e: {t: "ReLU vs Sigmoid", l: "https://machinelearningmastery.com/rectified-linear-activation-function-for-deep-learning-neural-networks/", type: "Read"} },
-                    { d: "Day 3", m: {t: "Backpropagation 1", l: "https://www.youtube.com/watch?v=Ilg3gGewQ5U", type: "Video"}, e: {t: "Backprop Math", l: "http://neuralnetworksanddeeplearning.com/chap2.html", type: "Read"} },
-                    { d: "Day 4", m: {t: "Backpropagation 2", l: "https://www.youtube.com/watch?v=tIeHLnjs5U8", type: "Video"}, e: {t: "Build NN from Scratch", l: "https://karpathy.github.io/neuralnets/", type: "Code"} },
-                    { d: "Day 5", m: {t: "Karpathy Micrograd", l: "https://www.youtube.com/watch?v=VMj-3S1tku0", type: "Video"}, e: {t: "Micrograd Repo", l: "https://github.com/karpathy/micrograd", type: "Read"} },
-                    { d: "Day 6", m: {t: "Deep Learning Spec C1", l: "https://www.coursera.org/learn/neural-networks-deep-learning", type: "Video"}, e: {t: "Implement Micrograd", l: "https://github.com/karpathy/micrograd", type: "Code"} },
-                ]
-            },
-            {
-                title: "Week 6: Optimization & PyTorch",
-                desc: "Adam, Dropout & Tensors",
-                days: [
-                    { d: "Day 1", m: {t: "Mini-batch Gradient", l: "https://www.youtube.com/watch?v=4qJaSmvhxi8", type: "Video"}, e: {t: "Stochastic GD", l: "https://ruder.io/optimizing-gradient-descent/", type: "Read"} },
-                    { d: "Day 2", m: {t: "Momentum & RMSProp", l: "https://www.youtube.com/watch?v=_JB0AO7QxHQ", type: "Video"}, e: {t: "Adam Optimizer", l: "https://machinelearningmastery.com/adam-optimization-algorithm-for-deep-learning/", type: "Read"} },
-                    { d: "Day 3", m: {t: "Regularization", l: "https://www.youtube.com/watch?v=6g0t3Phly2M", type: "Video"}, e: {t: "Dropout Paper", l: "https://jmlr.org/papers/v15/srivastava14a.html", type: "Read"} },
-                    { d: "Day 4", m: {t: "Batch Normalization", l: "https://www.youtube.com/watch?v=tNIpEZLv_l4", type: "Video"}, e: {t: "PyTorch Basics", l: "https://pytorch.org/tutorials/beginner/deep_learning_60min_blitz.html", type: "Read"} },
-                    { d: "Day 5", m: {t: "PyTorch Workflow", l: "https://www.youtube.com/watch?v=V_xro1bcAuA", type: "Video"}, e: {t: "Torch Autograd", l: "https://pytorch.org/tutorials/beginner/blitz/autograd_tutorial.html", type: "Read"} },
-                    { d: "Day 6", m: {t: "Building a Net", l: "https://www.youtube.com/watch?v=Z_ikDlimN6A", type: "Video"}, e: {t: "MNIST in PyTorch", l: "https://pytorch.org/examples/", type: "Code"} },
-                ]
-            },
-            {
-                title: "Week 7: Computer Vision (CNNs)",
-                desc: "Convolutions, Pooling & ResNets",
-                days: [
-                    { d: "Day 1", m: {t: "Convolution Op", l: "https://www.youtube.com/watch?v=bNb2fEVKeEo", type: "Video"}, e: {t: "Visualizing CNNs", l: "https://distill.pub/2017/feature-visualization/", type: "Read"} },
-                    { d: "Day 2", m: {t: "Padding & Stride", l: "https://www.youtube.com/watch?v=3h71iZ4v7iU", type: "Video"}, e: {t: "Conv Arithmetic", l: "https://arxiv.org/abs/1603.07285", type: "Read"} },
-                    { d: "Day 3", m: {t: "Pooling Layers", l: "https://www.youtube.com/watch?v=8oOgPUO-TRE", type: "Video"}, e: {t: "CS231n Notes", l: "https://cs231n.github.io/convolutional-networks/", type: "Read"} },
-                    { d: "Day 4", m: {t: "AlexNet & VGG", l: "https://www.youtube.com/watch?v=DAOcjicFr1Y", type: "Video"}, e: {t: "AlexNet Paper", l: "https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks", type: "Read"} },
-                    { d: "Day 5", m: {t: "ResNets & Skip Conn", l: "https://www.youtube.com/watch?v=ZILIbUvp5lk", type: "Video"}, e: {t: "ResNet Paper", l: "https://arxiv.org/abs/1512.03385", type: "Read"} },
-                    { d: "Day 6", m: {t: "Transfer Learning", l: "https://www.youtube.com/watch?v=yofjFQddwHE", type: "Video"}, e: {t: "Fine-tune ResNet", l: "https://pytorch.org/tutorials/beginner/transfer_learning_tutorial.html", type: "Code"} },
-                ]
-            },
-            {
-                title: "Week 8: RNNs & Sequences",
-                desc: "RNNs, LSTMs & Word Embeddings",
-                days: [
-                    { d: "Day 1", m: {t: "RNN Basics", l: "https://www.youtube.com/watch?v=6niqTuYFZZQ", type: "Video"}, e: {t: "Unreasonable Eff. of RNNs", l: "http://karpathy.github.io/2015/05/21/rnn-effectiveness/", type: "Read"} },
-                    { d: "Day 2", m: {t: "Vanishing Gradients", l: "https://www.youtube.com/watch?v=qO_NL7s7CJY", type: "Video"}, e: {t: "LSTMs Explained", l: "https://colah.github.io/posts/2015-08-Understanding-LSTMs/", type: "Read"} },
-                    { d: "Day 3", m: {t: "GRUs & LSTMs", l: "https://www.youtube.com/watch?v=5d14727Y8tE", type: "Video"}, e: {t: "Sequence Models", l: "https://distill.pub/2016/augmented-rnns/", type: "Read"} },
-                    { d: "Day 4", m: {t: "Word Embeddings", l: "https://www.youtube.com/watch?v=4dCE1PJPmpY", type: "Video"}, e: {t: "Word2Vec Paper", l: "https://arxiv.org/abs/1301.3781", type: "Read"} },
-                    { d: "Day 5", m: {t: "Sentiment Analysis", l: "https://www.youtube.com/watch?v=oJ-b52613_8", type: "Video"}, e: {t: "TorchText", l: "https://pytorch.org/text/stable/index.html", type: "Read"} },
-                    { d: "Day 6", m: {t: "Karpathy makemore", l: "https://www.youtube.com/watch?v=PaCmpygFfXo", type: "Video"}, e: {t: "Build a Name Gen", l: "https://github.com/karpathy/makemore", type: "Code"} },
-                ]
-            },
-            // PHASE 3: LLMs & TRANSFORMERS
-            {
-                title: "Week 9: Attention Mechanism",
-                desc: "The birth of Transformers",
-                days: [
-                    { d: "Day 1", m: {t: "Seq2Seq Models", l: "https://www.youtube.com/watch?v=L8HKweCvBm0", type: "Video"}, e: {t: "Visualizing Attention", l: "https://jalammar.github.io/visualizing-neural-machine-translation-mechanics-of-seq2seq-models-with-attention/", type: "Read"} },
-                    { d: "Day 2", m: {t: "Attention Mechanism", l: "https://www.youtube.com/watch?v=sysg9Yz9Wjk", type: "Video"}, e: {t: "Attention Is All You Need", l: "https://arxiv.org/abs/1706.03762", type: "Read"} },
-                    { d: "Day 3", m: {t: "Self-Attention", l: "https://www.youtube.com/watch?v=yGTUuEx8GkA", type: "Video"}, e: {t: "Illustrated Transformer", l: "https://jalammar.github.io/illustrated-transformer/", type: "Read"} },
-                    { d: "Day 4", m: {t: "Multi-Head Attention", l: "https://www.youtube.com/watch?v=mMaZK60H9Bg", type: "Video"}, e: {t: "Annotated Transformer", l: "http://nlp.seas.harvard.edu/2018/04/03/attention.html", type: "Code"} },
-                    { d: "Day 5", m: {t: "Positional Encoding", l: "https://www.youtube.com/watch?v=dichIcUZfOw", type: "Video"}, e: {t: "Transformer Code", l: "https://pytorch.org/tutorials/beginner/transformer_tutorial.html", type: "Code"} },
-                    { d: "Day 6", m: {t: "Build GPT: Part 1", l: "https://www.youtube.com/watch?v=kCc8FmEb1nY", type: "Video"}, e: {t: "NanoGPT Repo", l: "https://github.com/karpathy/nanoGPT", type: "Read"} },
-                ]
-            },
-            {
-                title: "Week 10: BERT & Encoders",
-                desc: "Understanding Encoders",
-                days: [
-                    { d: "Day 1", m: {t: "BERT Explained", l: "https://www.youtube.com/watch?v=xI0HHN5XKDo", type: "Video"}, e: {t: "Illustrated BERT", l: "https://jalammar.github.io/illustrated-bert/", type: "Read"} },
-                    { d: "Day 2", m: {t: "Masked LM", l: "https://www.youtube.com/watch?v=zIHyt_Y5_fI", type: "Video"}, e: {t: "BERT Paper", l: "https://arxiv.org/abs/1810.04805", type: "Read"} },
-                    { d: "Day 3", m: {t: "HuggingFace Intro", l: "https://www.youtube.com/watch?v=QEaBAZQCtwE", type: "Video"}, e: {t: "HF Course Ch 1", l: "https://huggingface.co/learn/nlp-course/chapter1/1", type: "Read"} },
-                    { d: "Day 4", m: {t: "Tokenization", l: "https://www.youtube.com/watch?v=vfB5W6xf_4U", type: "Video"}, e: {t: "HF Tokenizers", l: "https://huggingface.co/docs/transformers/tokenizer_summary", type: "Read"} },
-                    { d: "Day 5", m: {t: "Fine-tuning BERT", l: "https://www.youtube.com/watch?v=9he4XgZfFGE", type: "Video"}, e: {t: "Classification with BERT", l: "https://colab.research.google.com/github/huggingface/notebooks/blob/master/course/en/chapter3/section4.ipynb", type: "Code"} },
-                    { d: "Day 6", m: {t: "Modern Encoders", l: "https://www.youtube.com/watch?v=AcobLq3tHcw", type: "Video"}, e: {t: "RoBERTa & DistilBERT", l: "https://huggingface.co/docs/transformers/model_doc/roberta", type: "Read"} },
-                ]
-            },
-            {
-                title: "Week 11: GPT & Decoders",
-                desc: "Generative AI Core",
-                days: [
-                    { d: "Day 1", m: {t: "GPT-2 & GPT-3", l: "https://www.youtube.com/watch?v=tIzhQ6pA2nY", type: "Video"}, e: {t: "GPT-3 Paper", l: "https://arxiv.org/abs/2005.14165", type: "Read"} },
-                    { d: "Day 2", m: {t: "Causal Attention", l: "https://www.youtube.com/watch?v=l_Vv1hV-3z4", type: "Video"}, e: {t: "Illustrated GPT-2", l: "https://jalammar.github.io/illustrated-gpt2/", type: "Read"} },
-                    { d: "Day 3", m: {t: "Scaling Laws", l: "https://www.youtube.com/watch?v=Ty7J1aA0pME", type: "Video"}, e: {t: "Chinchilla Paper", l: "https://arxiv.org/abs/2203.15556", type: "Read"} },
-                    { d: "Day 4", m: {t: "Temperature & Top-K", l: "https://www.youtube.com/watch?v=3G5hWM6jqPk", type: "Video"}, e: {t: "Sampling Strategies", l: "https://huggingface.co/blog/how-to-generate", type: "Read"} },
-                    { d: "Day 5", m: {t: "Instruction Tuning", l: "https://www.youtube.com/watch?v=9vM4p9NN0Ts", type: "Video"}, e: {t: "InstructGPT Paper", l: "https://arxiv.org/abs/2203.02155", type: "Read"} },
-                    { d: "Day 6", m: {t: "Build GPT Part 2", l: "https://www.youtube.com/watch?v=kCc8FmEb1nY", type: "Video"}, e: {t: "Train on Shakespeare", l: "https://github.com/karpathy/nanoGPT", type: "Code"} },
-                ]
-            },
-            {
-                title: "Week 12: Fine-Tuning & PEFT",
-                desc: "LoRA, QLoRA & Adapters",
-                days: [
-                    { d: "Day 1", m: {t: "Full vs PEFT", l: "https://www.youtube.com/watch?v=Us5ZFp16PaU", type: "Video"}, e: {t: "HF PEFT Docs", l: "https://huggingface.co/docs/peft/index", type: "Read"} },
-                    { d: "Day 2", m: {t: "LoRA Explained", l: "https://www.youtube.com/watch?v=dA-NhRsrKD0", type: "Video"}, e: {t: "LoRA Paper", l: "https://arxiv.org/abs/2106.09685", type: "Read"} },
-                    { d: "Day 3", m: {t: "Quantization (4bit)", l: "https://www.youtube.com/watch?v=TPcXVJ1VSRI", type: "Video"}, e: {t: "QLoRA Blog", l: "https://huggingface.co/blog/4bit-transformers-bitsandbytes", type: "Read"} },
-                    { d: "Day 4", m: {t: "RLHF Basics", l: "https://www.youtube.com/watch?v=2MBJOuVkkjE", type: "Video"}, e: {t: "RLHF Blog", l: "https://huggingface.co/blog/rlhf", type: "Read"} },
-                    { d: "Day 5", m: {t: "Llama 2 & 3", l: "https://www.youtube.com/watch?v=zB5A6N0J1rE", type: "Video"}, e: {t: "Llama Paper", l: "https://arxiv.org/abs/2307.09288", type: "Read"} },
-                    { d: "Day 6", m: {t: "Fine-tune Llama", l: "https://www.youtube.com/watch?v=Q9zv369Ggfk", type: "Video"}, e: {t: "Run Llama locally", l: "https://github.com/ggerganov/llama.cpp", type: "Code"} },
-                ]
-            },
-            // PHASE 4: PRODUCTION & SYSTEM DESIGN
-            {
-                title: "Week 13: RAG & Vector DBs",
-                desc: "Retrieval Augmented Generation",
-                days: [
-                    { d: "Day 1", m: {t: "RAG Overview", l: "https://www.youtube.com/watch?v=T-D1OfcDW1M", type: "Video"}, e: {t: "Pinecone Learning", l: "https://www.pinecone.io/learn/retrieval-augmented-generation/", type: "Read"} },
-                    { d: "Day 2", m: {t: "Vector Databases", l: "https://www.youtube.com/watch?v=dN0lsF2cvm4", type: "Video"}, e: {t: "Faiss Lib", l: "https://github.com/facebookresearch/faiss", type: "Read"} },
-                    { d: "Day 3", m: {t: "LangChain Intro", l: "https://www.youtube.com/watch?v=aywZrzNaKjs", type: "Video"}, e: {t: "LangChain Docs", l: "https://python.langchain.com/docs/get_started/introduction", type: "Read"} },
-                    { d: "Day 4", m: {t: "Embeddings Deep Dive", l: "https://www.youtube.com/watch?v=5s7C8A4_sLg", type: "Video"}, e: {t: "OpenAI Embeddings", l: "https://platform.openai.com/docs/guides/embeddings", type: "Read"} },
-                    { d: "Day 5", m: {t: "Building RAG", l: "https://www.youtube.com/watch?v=LhnCsxgAVO0", type: "Video"}, e: {t: "LlamaIndex", l: "https://gpt-index.readthedocs.io/en/latest/", type: "Read"} },
-                    { d: "Day 6", m: {t: "RAG Project", l: "https://www.youtube.com/watch?v=wfp50x51tqA", type: "Video"}, e: {t: "Chat with PDF", l: "https://github.com/mayooear/gpt4-pdf-chatbot-langchain", type: "Code"} },
-                ]
-            },
-            {
-                title: "Week 14: MLOps & Serving",
-                desc: "Docker, API & Monitoring",
-                days: [
-                    { d: "Day 1", m: {t: "MLOps Intro", l: "https://www.youtube.com/watch?v=06-AZXmwHjo", type: "Video"}, e: {t: "MLOps Principles", l: "https://ml-ops.org/", type: "Read"} },
-                    { d: "Day 2", m: {t: "Model Serving", l: "https://www.youtube.com/watch?v=J3o43e_oQ0k", type: "Video"}, e: {t: "TorchServe", l: "https://pytorch.org/serve/", type: "Read"} },
-                    { d: "Day 3", m: {t: "Docker for ML", l: "https://www.youtube.com/watch?v=0qotVMX-J5s", type: "Video"}, e: {t: "FastAPI", l: "https://fastapi.tiangolo.com/", type: "Read"} },
-                    { d: "Day 4", m: {t: "Model Monitoring", l: "https://www.youtube.com/watch?v=D0hI_8P90B4", type: "Video"}, e: {t: "Arize AI Blog", l: "https://arize.com/blog/", type: "Read"} },
-                    { d: "Day 5", m: {t: "Feature Stores", l: "https://www.youtube.com/watch?v=7x1j5p4q2uM", type: "Video"}, e: {t: "Feast", l: "https://feast.dev/", type: "Read"} },
-                    { d: "Day 6", m: {t: "Full Stack DL", l: "https://fullstackdeeplearning.com/", type: "Read"}, e: {t: "Deploy on HF Spaces", l: "https://huggingface.co/docs/hub/spaces", type: "Code"} },
-                ]
-            },
-            {
-                title: "Week 15: ML System Design I",
-                desc: "The Interview Gauntlet",
-                days: [
-                    { d: "Day 1", m: {t: "Sys Design Intro", l: "https://www.youtube.com/watch?v=Gq_6sX9gqZM", type: "Video"}, e: {t: "Alex Xu ML Book", l: "https://bytebytego.com/", type: "Read"} },
-                    { d: "Day 2", m: {t: "Recommendation Sys", l: "https://www.youtube.com/watch?v=v_m3wP7k7jI", type: "Video"}, e: {t: "Netflix Tech Blog", l: "https://netflixtechblog.com/", type: "Read"} },
-                    { d: "Day 3", m: {t: "Search Ranking", l: "https://www.youtube.com/watch?v=1K5S6YqJ4tA", type: "Video"}, e: {t: "Airbnb Search", l: "https://medium.com/airbnb-engineering/ai-at-airbnb-33076152c9a4", type: "Read"} },
-                    { d: "Day 4", m: {t: "Ads Prediction", l: "https://www.youtube.com/watch?v=Pr0w5T_n6p0", type: "Video"}, e: {t: "Meta Ads Paper", l: "https://research.facebook.com/publications/practical-lessons-from-predicting-clicks-on-ads-at-facebook/", type: "Read"} },
-                    { d: "Day 5", m: {t: "Video Recs", l: "https://www.youtube.com/watch?v=733m6qBH-jI", type: "Video"}, e: {t: "YouTube Recs Paper", l: "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/45530.pdf", type: "Read"} },
-                    { d: "Day 6", m: {t: "Design a News Feed", l: "https://www.youtube.com/watch?v=Nb3sB_I5WJc", type: "Video"}, e: {t: "System Design Primer", l: "https://github.com/donnemartin/system-design-primer", type: "Read"} },
-                ]
-            },
-            {
-                title: "Week 16: Final Prep & Review",
-                desc: "Coding & Mock Interviews",
-                days: [
-                    { d: "Day 1", m: {t: "ML Coding Pattern", l: "https://www.youtube.com/watch?v=Ujq6S6j_7K0", type: "Video"}, e: {t: "LeetCode Top 150", l: "https://leetcode.com/studyplan/top-interview-150/", type: "Code"} },
-                    { d: "Day 2", m: {t: "Graph Algorithms", l: "https://www.youtube.com/watch?v=tWVWeAqZ0uh", type: "Video"}, e: {t: "Graph Neural Nets", l: "https://distill.pub/2021/gnn-intro/", type: "Read"} },
-                    { d: "Day 3", m: {t: "Dynamic Prog", l: "https://www.youtube.com/watch?v=oBt53YbR9Kk", type: "Video"}, e: {t: "DP for ML (Viterbi)", l: "https://en.wikipedia.org/wiki/Viterbi_algorithm", type: "Read"} },
-                    { d: "Day 4", m: {t: "Mock Interview 1", l: "https://www.youtube.com/watch?v=4QdZ8f9X9yI", type: "Video"}, e: {t: "Behavioral Qs", l: "https://www.techinterviewhandbook.org/behavioral-interview-questions/", type: "Read"} },
-                    { d: "Day 5", m: {t: "Mock Interview 2", l: "https://www.youtube.com/watch?v=3QdZ8f9X9yI", type: "Video"}, e: {t: "Resume Review", l: "https://www.techinterviewhandbook.org/resume-guide/", type: "Read"} },
-                    { d: "Day 6", m: {t: "Final Review", l: "https://www.youtube.com/watch?v=7QdZ8f9X9yI", type: "Video"}, e: {t: "Apply to FAANG", l: "https://www.google.com/about/careers/", type: "Read"} },
+                    { d: "Mon", m: {t: "Derivatives", l: "https://youtu.be/WUvTyaaNkzM", sum: "Derivatives measure the rate of change or slope." }, e: {t: "Probability", l: "https://seeing-theory.brown.edu", sum: "Learn basic probability distributions."} },
+                    { d: "Tue", m: {t: "Chain Rule", l: "https://youtu.be/YG15m2VwSjA", sum: "The chain rule helps find derivatives of nested functions." }, e: {t: "Distributions", l: "https://seeing-theory.brown.edu", sum: "Normal distribution is the bell curve."} },
+                    { d: "Wed", m: {t: "Gradient Descent", l: "https://youtu.be/IHZwWFHWa-w", sum: "Gradient descent finds the minimum error." }, e: {t: "Bayes", l: "https://seeing-theory.brown.edu", sum: "Bayes theorem updates probabilities with new data."} },
+                    { d: "Thu", m: {t: "Backprop", l: "https://youtu.be/tIeHLnjs5U8", sum: "Backprop calculates gradients for neural networks." }, e: {t: "Stats Code", l: "https://scikit-learn.org", sum: "Implement statistical tests in Python."} },
+                    { d: "Fri", m: {t: "Multi-Calc", l: "https://khanacademy.org", sum: "Multivariate calculus deals with multiple variables." }, e: {t: "Variance", l: "https://scribbr.com", sum: "Variance measures data spread."} },
+                    { d: "Sat", m: {t: "Review", l: "https://coursera.org", sum: "Review gradients and chain rule." }, e: {t: "Code GD", l: "https://towardsdatascience.com", sum: "Code a gradient descent loop from scratch."} },
                 ]
             }
         ];
 
         function App() {
             const [weekIdx, setWeekIdx] = useState(() => {
-                try { return parseInt(localStorage.getItem('faang_ai_week')) || 0; } catch { return 0; }
+                try { return parseInt(localStorage.getItem('faang_week')) || 0; } catch { return 0; }
             });
             const [dayIdx, setDayIdx] = useState(0);
             const [completed, setCompleted] = useState(() => {
-                try { return JSON.parse(localStorage.getItem('faang_ai_done')) || []; } catch { return []; }
+                try { return JSON.parse(localStorage.getItem('faang_done')) || []; } catch { return []; }
             });
+            const [speaking, setSpeaking] = useState(false);
 
-            useEffect(() => localStorage.setItem('faang_ai_done', JSON.stringify(completed)), [completed]);
-            useEffect(() => localStorage.setItem('faang_ai_week', weekIdx), [weekIdx]);
-
-            const currentWeek = fullCurriculum[weekIdx] || fullCurriculum[0];
+            const currentWeek = curriculum[weekIdx] || curriculum[0];
             const currentDay = currentWeek.days[dayIdx] || currentWeek.days[0];
-            
             const mId = `w${weekIdx}d${dayIdx}m`;
             const eId = `w${weekIdx}d${dayIdx}e`;
 
-            const toggle = (id) => {
-                if (completed.includes(id)) setCompleted(c => c.filter(x => x !== id));
-                else setCompleted(c => [...c, id]);
-            }
-
-            // --- ONE-CLICK SYNC (PWA COMPATIBLE) ---
-            const openICS = () => {
-                const events = [];
-                
-                // START FROM TODAY
-                const startDate = new Date(); // Today
-                
-                currentWeek.days.forEach((dayData, index) => {
-                    const eventDate = new Date(startDate);
-                    eventDate.setDate(startDate.getDate() + index);
-
-                    const formatDate = (date, hour) => {
-                        const d = new Date(date);
-                        d.setHours(hour, 0, 0, 0);
-                        return d.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
-                    };
-
-                    events.push(
-                        `BEGIN:VEVENT\nSUMMARY:AI Study: ${dayData.m.t}\nDTSTART:${formatDate(eventDate, 11)}\nDTEND:${formatDate(eventDate, 13)}\nDESCRIPTION:Link: ${dayData.m.l}\nEND:VEVENT`
-                    );
-
-                    events.push(
-                        `BEGIN:VEVENT\nSUMMARY:AI Lab: ${dayData.e.t}\nDTSTART:${formatDate(eventDate, 18)}\nDTEND:${formatDate(eventDate, 20)}\nDESCRIPTION:Link: ${dayData.e.l}\nEND:VEVENT`
-                    );
-                });
-
-                const icsContent = `BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//FAANG AI Path//EN\n${events.join("\n")}\nEND:VCALENDAR`;
-                
-                // Direct Open Strategy (Bypasses download restrictions)
-                const url = "data:text/calendar;charset=utf8," + encodeURIComponent(icsContent);
-                window.open(url);
+            // --- AUDIO ---
+            const speak = (text) => {
+                if (!window.speechSynthesis) return;
+                window.speechSynthesis.cancel();
+                if (speaking) { setSpeaking(false); return; }
+                const u = new SpeechSynthesisUtterance(text);
+                u.onend = () => setSpeaking(false);
+                window.speechSynthesis.speak(u);
+                setSpeaking(true);
             };
 
-            const getCalLink = (title, isMorning) => {
-                const h = isMorning ? 11 : 18;
+            // --- ANDROID DOWNLOAD SYNC ---
+            const syncWeek = () => {
+                const events = [];
                 const now = new Date();
-                const d = new Date(); 
-                d.setHours(h,0,0,0);
-                if(d < now) d.setDate(d.getDate()+1);
-                const start = d.toISOString().replace(/[-:]/g,"").split('.')[0]+"Z";
-                const end = new Date(d.getTime() + 7200000).toISOString().replace(/[-:]/g,"").split('.')[0]+"Z";
-                return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${start}/${end}&details=AI Learning Session`;
-            }
+                
+                // Start schedule from TODAY
+                currentWeek.days.forEach((dayData, index) => {
+                    const eventDate = new Date(now);
+                    eventDate.setDate(now.getDate() + index);
+                    
+                    const fmt = (d, h) => {
+                        const date = new Date(d);
+                        date.setHours(h,0,0);
+                        return date.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+                    };
+
+                    // Morning
+                    events.push(`BEGIN:VEVENT\nSUMMARY:AI Study: ${dayData.m.t}\nDTSTART:${fmt(eventDate, 11)}\nDTEND:${fmt(eventDate, 13)}\nDESCRIPTION:Link: ${dayData.m.l}\nEND:VEVENT`);
+                    // Evening
+                    events.push(`BEGIN:VEVENT\nSUMMARY:AI Lab: ${dayData.e.t}\nDTSTART:${fmt(eventDate, 18)}\nDTEND:${fmt(eventDate, 20)}\nDESCRIPTION:Link: ${dayData.e.l}\nEND:VEVENT`);
+                });
+
+                const icsContent = `BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//FAANG AI//EN\n${events.join("\n")}\nEND:VCALENDAR`;
+                
+                // FORCE DOWNLOAD (Android Reliable Method)
+                const element = document.createElement('a');
+                const file = new Blob([icsContent], {type: 'text/calendar'});
+                element.href = URL.createObjectURL(file);
+                element.download = `FAANG_Week_${weekIdx + 1}.ics`;
+                document.body.appendChild(element); // Required for this to work in FireFox
+                element.click();
+                document.body.removeChild(element);
+
+                alert("File Downloaded! \n\n1. Tap 'Open' in your notifications.\n2. Select 'Google Calendar' to import all events.");
+            };
+
+            const toggle = (id) => {
+                const next = completed.includes(id) ? completed.filter(x => x !== id) : [...completed, id];
+                setCompleted(next);
+                localStorage.setItem('faang_done', JSON.stringify(next));
+            };
+
+            useEffect(() => {
+                localStorage.setItem('faang_week', weekIdx);
+            }, [weekIdx]);
+
+            // Google Calendar Direct Link (For single event fallback)
+            const getDirectLink = (title, isMorning) => {
+                 const now = new Date();
+                 const h = isMorning ? 11 : 18;
+                 // If today is past the time, assume tomorrow, otherwise today
+                 if (now.getHours() >= h) now.setDate(now.getDate() + 1);
+                 
+                 now.setHours(h, 0, 0, 0);
+                 const start = now.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+                 const end = new Date(now.getTime() + 2 * 60 * 60 * 1000).toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+                 
+                 return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent("AI: " + title)}&dates=${start}/${end}`;
+            };
+
+            const progress = Math.round((completed.length / (curriculum.length * 12)) * 100) || 0;
 
             return (
                 <div className="min-h-screen pb-safe">
                     {/* Header */}
-                    <div className="bg-slate-900 text-white pt-12 pb-6 px-6 rounded-b-[2.5rem] shadow-2xl sticky top-0 z-20">
-                        <div className="flex justify-between items-end mb-6">
+                    <div className="bg-slate-900 text-white p-6 rounded-b-[2rem] shadow-xl sticky top-0 z-10">
+                        <div className="flex justify-between items-center mb-4">
                             <div>
-                                <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-500">FAANG Path</h1>
-                                <p className="text-slate-400 text-sm mt-1 font-medium">Zero to AI Engineer</p>
+                                <h1 className="text-2xl font-bold text-blue-400">FAANG Path</h1>
+                                <p className="text-xs text-slate-400">Progress: {progress}%</p>
                             </div>
-                            <div className="bg-slate-800/50 px-4 py-2 rounded-2xl backdrop-blur-md border border-slate-700">
-                                <div className="text-2xl font-bold text-cyan-400">{weekIdx + 1}<span className="text-slate-500 text-sm"> / 16</span></div>
+                            
+                            <div className="flex items-center gap-2 bg-slate-800 px-3 py-1 rounded-lg">
+                                <button onClick={() => setWeekIdx(Math.max(0, weekIdx - 1))} disabled={weekIdx===0} className="disabled:opacity-30">←</button>
+                                <span className="font-mono font-bold">W{weekIdx + 1}</span>
+                                <button onClick={() => setWeekIdx(Math.min(curriculum.length-1, weekIdx + 1))} disabled={weekIdx===curriculum.length-1} className="disabled:opacity-30">→</button>
                             </div>
                         </div>
 
-                        {/* Week Nav */}
-                        <div className="flex items-center justify-between bg-slate-800/80 p-2 rounded-2xl backdrop-blur-xl border border-slate-700 shadow-inner mb-4">
-                            <button onClick={() => setWeekIdx(Math.max(0, weekIdx - 1))} className="p-3 hover:bg-slate-700 rounded-xl transition-all disabled:opacity-30"><Icons.Left className="w-6 h-6" /></button>
-                            <div className="text-center flex-1 px-2">
-                                <div className="font-bold text-sm text-slate-100 leading-tight">{currentWeek.title}</div>
-                                <div className="text-[10px] text-slate-400 uppercase tracking-widest mt-1">{currentWeek.desc}</div>
-                            </div>
-                            <button onClick={() => setWeekIdx(Math.min(fullCurriculum.length - 1, weekIdx + 1))} className="p-3 hover:bg-slate-700 rounded-xl transition-all disabled:opacity-30"><Icons.Right className="w-6 h-6" /></button>
-                        </div>
+                        {/* SYNC BUTTON */}
+                        <button onClick={syncWeek} className="w-full mb-4 bg-gradient-to-r from-blue-600 to-cyan-600 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-transform">
+                            <Icons.Calendar/> Download Week Schedule
+                        </button>
 
-                        {/* *** NEW DEDICATED SYNC ROW *** */}
-                        <div>
-                             <button 
-                                onClick={openICS} 
-                                className="w-full bg-gradient-to-r from-orange-500 to-amber-500 text-white py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-orange-900/30 active:scale-95 transition-all"
-                             >
-                                <Icons.Calendar className="w-5 h-5"/>
-                                Sync This Week's Schedule
-                            </button>
-                        </div>
-                    </div>
-
-                    {/* Content */}
-                    <div className="px-5 mt-6 pb-20 space-y-6">
-                        
                         {/* Day Tabs */}
-                        <div className="flex gap-2 overflow-x-auto hide-scrollbar pb-2">
+                        <div className="flex gap-2 overflow-x-auto hide-scrollbar pb-1">
                             {currentWeek.days.map((d, i) => (
-                                <button key={i} onClick={() => setDayIdx(i)} className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all shadow-sm whitespace-nowrap ${dayIdx === i ? 'bg-blue-600 text-white shadow-blue-500/30 scale-105' : 'bg-white text-slate-500 border border-slate-200'}`}>
+                                <button key={i} onClick={() => { setDayIdx(i); window.speechSynthesis.cancel(); setSpeaking(false); }} 
+                                    className={`px-4 py-2 rounded-lg font-bold text-sm transition-all ${dayIdx === i ? 'bg-white text-slate-900' : 'bg-slate-800 text-slate-400'}`}>
                                     {d.d}
                                 </button>
                             ))}
                         </div>
+                    </div>
 
-                        {/* Morning Card */}
-                        <div className={`bg-white rounded-[2rem] p-6 shadow-xl shadow-slate-200/50 border border-slate-100 relative overflow-hidden transition-all duration-500 ${completed.includes(mId) ? 'opacity-50 grayscale' : ''}`}>
-                            <div className="absolute top-0 left-0 w-1.5 h-full bg-orange-400"></div>
-                            <div className="flex justify-between items-start mb-4">
-                                <div className="flex items-center gap-2 text-orange-500 font-bold text-xs uppercase tracking-wider">
-                                    <Icons.Sun className="w-4 h-4" /> Morning (11 AM)
-                                </div>
-                                <a href={getCalLink(currentDay.m.t, true)} className="text-slate-300 hover:text-orange-500 transition-colors"><Icons.Alarm className="w-5 h-5"/></a>
+                    {/* Content */}
+                    <div className="p-5 space-y-6">
+                        
+                        {/* Morning */}
+                        <div className={`bg-white p-5 rounded-2xl shadow-sm border-l-4 border-orange-400 ${completed.includes(mId) ? 'opacity-50' : ''}`}>
+                            <div className="flex justify-between items-center mb-2">
+                                <span className="text-xs font-bold text-orange-500 uppercase tracking-wider flex items-center gap-1"><Icons.Sun/> Morning</span>
+                                <a href={getDirectLink(currentDay.m.t, true)} target="_blank" className="text-slate-300"><Icons.Alarm/></a>
                             </div>
-                            <a href={currentDay.m.l} target="_blank" rel="noopener noreferrer" className="block">
-                                <h3 className="text-xl font-bold text-slate-800 mb-2 leading-tight hover:text-blue-600 transition-colors underline decoration-dotted decoration-slate-300">{currentDay.m.t} <Icons.ExtLink className="inline w-4 h-4 text-slate-400 ml-1"/></h3>
-                            </a>
-                            <div className="flex gap-3 mt-6">
-                                <a href={currentDay.m.l} target="_blank" rel="noopener noreferrer" className="flex-1 bg-orange-50 text-orange-600 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-orange-100 transition-colors">
-                                    <Icons.Youtube className="w-5 h-5" /> Watch Lecture
+                            <h2 className="text-lg font-bold text-slate-800 mb-1">{currentDay.m.t}</h2>
+                            
+                            <div className="flex gap-2 mt-4">
+                                <button onClick={() => speak(currentDay.m.sum)} className={`flex-1 py-2 rounded-lg flex items-center justify-center gap-2 text-sm font-bold border ${speaking ? 'bg-orange-50 border-orange-200 text-orange-600' : 'bg-white border-slate-200 text-slate-600'}`}>
+                                    {speaking ? <Icons.Stop/> : <Icons.Play/>} Audio
+                                </button>
+                                <a href={currentDay.m.l} target="_blank" className="flex-1 py-2 bg-orange-50 text-orange-600 rounded-lg flex items-center justify-center gap-2 text-sm font-bold">
+                                    View
                                 </a>
-                                <button onClick={() => toggle(mId)} className={`w-12 rounded-xl flex items-center justify-center border-2 transition-all ${completed.includes(mId) ? 'bg-green-500 border-green-500 text-white' : 'border-slate-200 text-slate-200 hover:border-green-400'}`}>
-                                    <Icons.Check className="w-6 h-6" />
+                                <button onClick={() => toggle(mId)} className={`w-10 rounded-lg border-2 flex items-center justify-center ${completed.includes(mId) ? 'bg-green-500 border-green-500 text-white' : 'border-slate-200 text-slate-300'}`}>
+                                    <Icons.Check/>
                                 </button>
                             </div>
                         </div>
 
-                        {/* Evening Card */}
-                        <div className={`bg-white rounded-[2rem] p-6 shadow-xl shadow-slate-200/50 border border-slate-100 relative overflow-hidden transition-all duration-500 ${completed.includes(eId) ? 'opacity-50 grayscale' : ''}`}>
-                            <div className="absolute top-0 left-0 w-1.5 h-full bg-indigo-500"></div>
-                            <div className="flex justify-between items-start mb-4">
-                                <div className="flex items-center gap-2 text-indigo-500 font-bold text-xs uppercase tracking-wider">
-                                    <Icons.Moon className="w-4 h-4" /> Evening (6 PM)
-                                </div>
-                                <a href={getCalLink(currentDay.e.t, false)} className="text-slate-300 hover:text-indigo-500 transition-colors"><Icons.Alarm className="w-5 h-5"/></a>
+                        {/* Evening */}
+                        <div className={`bg-white p-5 rounded-2xl shadow-sm border-l-4 border-indigo-500 ${completed.includes(eId) ? 'opacity-50' : ''}`}>
+                            <div className="flex justify-between items-center mb-2">
+                                <span className="text-xs font-bold text-indigo-500 uppercase tracking-wider flex items-center gap-1"><Icons.Moon/> Evening</span>
+                                <a href={getDirectLink(currentDay.e.t, false)} target="_blank" className="text-slate-300"><Icons.Alarm/></a>
                             </div>
-                            <a href={currentDay.e.l} target="_blank" rel="noopener noreferrer" className="block">
-                                <h3 className="text-xl font-bold text-slate-800 mb-2 leading-tight hover:text-blue-600 transition-colors underline decoration-dotted decoration-slate-300">{currentDay.e.t} <Icons.ExtLink className="inline w-4 h-4 text-slate-400 ml-1"/></h3>
-                            </a>
-                            <div className="flex gap-3 mt-6">
-                                <a href={currentDay.e.l} target="_blank" rel="noopener noreferrer" className="flex-1 bg-indigo-50 text-indigo-600 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-indigo-100 transition-colors">
-                                    <Icons.Book className="w-4 h-4" /> {currentDay.e.type}
+                            <h2 className="text-lg font-bold text-slate-800 mb-1">{currentDay.e.t}</h2>
+                            
+                            <div className="flex gap-2 mt-4">
+                                <button onClick={() => speak(currentDay.e.sum)} className="flex-1 py-2 bg-white text-slate-600 border border-slate-200 rounded-lg flex items-center justify-center gap-2 text-sm font-bold">
+                                    <Icons.Play/> Audio
+                                </button>
+                                <a href={currentDay.e.l} target="_blank" className="flex-1 py-2 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center gap-2 text-sm font-bold">
+                                    Read
                                 </a>
-                                <button onClick={() => toggle(eId)} className={`w-12 rounded-xl flex items-center justify-center border-2 transition-all ${completed.includes(eId) ? 'bg-green-500 border-green-500 text-white' : 'border-slate-200 text-slate-200 hover:border-green-400'}`}>
-                                    <Icons.Check className="w-6 h-6" />
+                                <button onClick={() => toggle(eId)} className={`w-10 rounded-lg border-2 flex items-center justify-center ${completed.includes(eId) ? 'bg-green-500 border-green-500 text-white' : 'border-slate-200 text-slate-300'}`}>
+                                    <Icons.Check/>
                                 </button>
                             </div>
                         </div>
