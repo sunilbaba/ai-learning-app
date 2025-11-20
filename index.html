@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FAANG Path Fixed</title>
+    <title>FAANG AI Path</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#0f172a">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -41,12 +41,12 @@
             Youtube: (p) => <svg {...p} viewBox="0 0 24 24" fill="#FF0000" stroke="none"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>,
             Book: (p) => <Icon {...p} d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />,
             Alarm: (p) => <Icon {...p} d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0" />,
-            ExtLink: (p) => <Icon {...p} d="M10 6H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            ExtLink: (p) => <Icon {...p} d="M10 6H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4M14 4h6m0 0v6m0-6L10 14" />,
+            Calendar: (p) => <Icon {...p} d="M19 4H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zM16 2v4M8 2v4M3 10h18" />
         };
 
-        // --- FULL 24-WEEK CURRICULUM DATA ---
+        // --- CURRICULUM DATA ---
         const fullCurriculum = [
-            // PHASE 1: FOUNDATIONS
             {
                 title: "Week 1: Linear Algebra & Python",
                 desc: "Vectors, Matrices & Numpy",
@@ -267,6 +267,53 @@
                 else setCompleted(c => [...c, id]);
             }
 
+            // --- NEW: ONE-CLICK SYNC (ICS Generation) ---
+            const downloadICS = () => {
+                const events = [];
+                const now = new Date();
+                
+                // Find the next Monday (or today if today is Monday) to start the schedule
+                const startDate = new Date(now);
+                const day = startDate.getDay();
+                const diff = startDate.getDate() - day + (day == 0 ? -6 : 1); // Adjust when day is Sunday
+                startDate.setDate(diff);
+                if (startDate < new Date().setHours(0,0,0,0)) startDate.setDate(startDate.getDate() + 7); // If Monday was in past, move to next week
+
+                // Loop through the 6 days of the curriculum
+                currentWeek.days.forEach((dayData, index) => {
+                    const eventDate = new Date(startDate);
+                    eventDate.setDate(startDate.getDate() + index); // Add days (Mon, Tue, Wed...)
+
+                    // Helper to format ICS date
+                    const formatDate = (date, hour) => {
+                        const d = new Date(date);
+                        d.setHours(hour, 0, 0, 0);
+                        return d.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+                    };
+
+                    // Morning Event (11:00 AM)
+                    events.push(
+                        `BEGIN:VEVENT\nSUMMARY:AI Study: ${dayData.m.t}\nDTSTART:${formatDate(eventDate, 11)}\nDTEND:${formatDate(eventDate, 13)}\nDESCRIPTION:Link: ${dayData.m.l}\nEND:VEVENT`
+                    );
+
+                    // Evening Event (6:00 PM)
+                    events.push(
+                        `BEGIN:VEVENT\nSUMMARY:AI Lab: ${dayData.e.t}\nDTSTART:${formatDate(eventDate, 18)}\nDTEND:${formatDate(eventDate, 20)}\nDESCRIPTION:Link: ${dayData.e.l}\nEND:VEVENT`
+                    );
+                });
+
+                const icsContent = `BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//FAANG AI Path//EN\n${events.join("\n")}\nEND:VCALENDAR`;
+                
+                const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+                const link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                link.setAttribute('download', `Week_${weekIdx+1}_Schedule.ics`);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            };
+
+            // Single alarm fallback
             const getCalLink = (title, isMorning) => {
                 const h = isMorning ? 11 : 18;
                 const now = new Date();
@@ -281,7 +328,7 @@
             return (
                 <div className="min-h-screen pb-safe">
                     {/* Header */}
-                    <div className="bg-slate-900 text-white pt-12 pb-8 px-6 rounded-b-[2.5rem] shadow-2xl sticky top-0 z-20">
+                    <div className="bg-slate-900 text-white pt-12 pb-6 px-6 rounded-b-[2.5rem] shadow-2xl sticky top-0 z-20">
                         <div className="flex justify-between items-end mb-6">
                             <div>
                                 <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-500">FAANG Path</h1>
@@ -292,15 +339,21 @@
                             </div>
                         </div>
 
-                        {/* Week Nav */}
-                        <div className="flex items-center justify-between bg-slate-800/80 p-2 rounded-2xl backdrop-blur-xl border border-slate-700 shadow-inner">
-                            <button onClick={() => setWeekIdx(Math.max(0, weekIdx - 1))} className="p-3 hover:bg-slate-700 rounded-xl transition-all disabled:opacity-30"><Icons.Left className="w-6 h-6" /></button>
-                            <div className="text-center flex-1 px-2">
-                                <div className="font-bold text-sm text-slate-100 leading-tight">{currentWeek.title}</div>
-                                <div className="text-[10px] text-slate-400 uppercase tracking-widest mt-1">{currentWeek.desc}</div>
+                        {/* Week Nav & Sync Button */}
+                        <div className="flex gap-2 mb-2">
+                             <div className="flex flex-1 items-center justify-between bg-slate-800/80 p-2 rounded-2xl backdrop-blur-xl border border-slate-700 shadow-inner">
+                                <button onClick={() => setWeekIdx(Math.max(0, weekIdx - 1))} className="p-3 hover:bg-slate-700 rounded-xl transition-all disabled:opacity-30"><Icons.Left className="w-6 h-6" /></button>
+                                <div className="text-center flex-1 px-2">
+                                    <div className="font-bold text-sm text-slate-100 leading-tight truncate">{currentWeek.title}</div>
+                                </div>
+                                <button onClick={() => setWeekIdx(Math.min(fullCurriculum.length - 1, weekIdx + 1))} className="p-3 hover:bg-slate-700 rounded-xl transition-all disabled:opacity-30"><Icons.Right className="w-6 h-6" /></button>
                             </div>
-                            <button onClick={() => setWeekIdx(Math.min(fullCurriculum.length - 1, weekIdx + 1))} className="p-3 hover:bg-slate-700 rounded-xl transition-all disabled:opacity-30"><Icons.Right className="w-6 h-6" /></button>
+                            <button onClick={downloadICS} className="bg-blue-600 text-white px-4 rounded-2xl font-bold text-xs flex flex-col items-center justify-center hover:bg-blue-500 active:scale-95 transition-all shadow-lg shadow-blue-900/50">
+                                <Icons.Calendar className="w-5 h-5 mb-1"/>
+                                Sync Week
+                            </button>
                         </div>
+                        <div className="text-[10px] text-slate-400 text-center">{currentWeek.desc}</div>
                     </div>
 
                     {/* Content */}
@@ -324,7 +377,6 @@
                                 </div>
                                 <a href={getCalLink(currentDay.m.t, true)} className="text-slate-300 hover:text-orange-500 transition-colors"><Icons.Alarm className="w-5 h-5"/></a>
                             </div>
-                            {/* Title is now a Link */}
                             <a href={currentDay.m.l} target="_blank" rel="noopener noreferrer" className="block">
                                 <h3 className="text-xl font-bold text-slate-800 mb-2 leading-tight hover:text-blue-600 transition-colors underline decoration-dotted decoration-slate-300">{currentDay.m.t} <Icons.ExtLink className="inline w-4 h-4 text-slate-400 ml-1"/></h3>
                             </a>
@@ -347,7 +399,6 @@
                                 </div>
                                 <a href={getCalLink(currentDay.e.t, false)} className="text-slate-300 hover:text-indigo-500 transition-colors"><Icons.Alarm className="w-5 h-5"/></a>
                             </div>
-                            {/* Title is now a Link */}
                             <a href={currentDay.e.l} target="_blank" rel="noopener noreferrer" className="block">
                                 <h3 className="text-xl font-bold text-slate-800 mb-2 leading-tight hover:text-blue-600 transition-colors underline decoration-dotted decoration-slate-300">{currentDay.e.t} <Icons.ExtLink className="inline w-4 h-4 text-slate-400 ml-1"/></h3>
                             </a>
@@ -371,4 +422,5 @@
     </script>
 </body>
 </html>
+
 
