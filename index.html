@@ -3,37 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FAANG Path</title>
+    <title>FAANG AI Master</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#0f172a">
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    
-    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='120' fill='%230f172a'/%3E%3Cpath d='M256 120C180.9 120 120 180.9 120 256s60.9 136 136 136 136-60.9 136-136-60.9-136-136-136zm0 232c-53 0-96-43-96-96s43-96 96-96 96 43 96 96-43 96-96 96z' fill='%23334155'/%3E%3Ccircle cx='256' cy='186' r='24' fill='%233b82f6'/%3E%3Ccircle cx='186' cy='296' r='24' fill='%2310b981'/%3E%3Ccircle cx='326' cy='296' r='24' fill='%238b5cf6'/%3E%3Cpath d='M256 186L186 296M256 186L326 296M186 296H326' stroke='white' stroke-width='12' stroke-linecap='round'/%3E%3C/svg%3E">
-
     <style>
-        body { overscroll-behavior-y: contain; -webkit-tap-highlight-color: transparent; font-family: sans-serif; background-color: #f8fafc; }
-        .pb-safe { padding-bottom: 100px; }
+        body { -webkit-tap-highlight-color: transparent; font-family: sans-serif; background-color: #f8fafc; }
+        .pb-safe { padding-bottom: 120px; }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 <body>
     <div id="root"></div>
-
     <script type="text/babel">
         const { useState, useEffect } = React;
 
         // --- ICONS ---
-        const Icon = ({ d, className }) => (
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-                <path d={d} />
-            </svg>
-        );
-
+        const Icon = ({ d, className }) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}><path d={d} /></svg>;
         const Icons = {
             Sun: () => <Icon className="w-4 h-4" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M16.95 17.657l.707.707M6.343 6.343l.707.707M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z" />,
             Moon: () => <Icon className="w-4 h-4" d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />,
@@ -43,53 +33,161 @@
             Left: () => <Icon className="w-5 h-5" d="M15 18l-6-6 6-6" />,
             Right: () => <Icon className="w-5 h-5" d="M9 18l6-6-6-6" />,
             Alarm: () => <Icon className="w-5 h-5" d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0" />,
-            Calendar: () => <Icon className="w-5 h-5" d="M19 4H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zM16 2v4M8 2v4M3 10h18" />
+            Cal: () => <Icon className="w-5 h-5" d="M19 4H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zM16 2v4M8 2v4M3 10h18" />
         };
 
-        // --- DATA ---
+        // --- FULL 16-WEEK CURRICULUM ---
         const curriculum = [
-            {
-                title: "Week 1: Linear Algebra",
-                days: [
-                    { d: "Mon", m: {t: "Vectors", l: "https://youtu.be/fNk_zzaMoSs", sum: "Vectors are arrays of numbers. They represent coordinates in space." }, e: {t: "Numpy Arrays", l: "https://jakevdp.github.io/PythonDataScienceHandbook/02.01-understanding-data-types.html", sum: "Numpy arrays are faster than lists. Use them for math operations."} },
-                    { d: "Tue", m: {t: "Dot Products", l: "https://youtu.be/LyGKycYT2v0", sum: "Dot products measure similarity between two vectors." }, e: {t: "Numpy Math", l: "https://jakevdp.github.io/PythonDataScienceHandbook/02.03-computation-on-arrays-ufuncs.html", sum: "Use broadcasting to add numbers to arrays without loops."} },
-                    { d: "Wed", m: {t: "Matrices", l: "https://youtu.be/kYB8IZa5AuE", sum: "Matrices transform space. They can rotate or stretch vectors." }, e: {t: "Pandas Basics", l: "https://jakevdp.github.io/PythonDataScienceHandbook/03.01-introducing-pandas-objects.html", sum: "Pandas DataFrames are like Excel sheets for Python code."} },
-                    { d: "Thu", m: {t: "Determinants", l: "https://youtu.be/Ip3X9LOh2dk", sum: "Determinants tell you how much a matrix scales area." }, e: {t: "Data Selection", l: "https://jakevdp.github.io/PythonDataScienceHandbook/03.02-data-indexing-and-selection.html", sum: "Use .loc and .iloc to select rows and columns efficiently."} },
-                    { d: "Fri", m: {t: "Eigenvectors", l: "https://youtu.be/PFDu9oVAE-g", sum: "Eigenvectors don't get knocked off their span during transformation." }, e: {t: "Missing Data", l: "https://jakevdp.github.io/PythonDataScienceHandbook/03.04-missing-values.html", sum: "Fill missing data (NaN) with mean or median values."} },
-                    { d: "Sat", m: {t: "Review", l: "https://www.coursera.org/learn/machine-learning-linear-algebra", sum: "Review vectors, matrices, and dot products today." }, e: {t: "Practice", l: "https://kaggle.com", sum: "Try the Titanic dataset on Kaggle."} },
-                ]
-            },
-            {
-                title: "Week 2: Calculus",
-                days: [
-                    { d: "Mon", m: {t: "Derivatives", l: "https://youtu.be/WUvTyaaNkzM", sum: "Derivatives measure the rate of change or slope." }, e: {t: "Probability", l: "https://seeing-theory.brown.edu", sum: "Learn basic probability distributions."} },
-                    { d: "Tue", m: {t: "Chain Rule", l: "https://youtu.be/YG15m2VwSjA", sum: "The chain rule helps find derivatives of nested functions." }, e: {t: "Distributions", l: "https://seeing-theory.brown.edu", sum: "Normal distribution is the bell curve."} },
-                    { d: "Wed", m: {t: "Gradient Descent", l: "https://youtu.be/IHZwWFHWa-w", sum: "Gradient descent finds the minimum error." }, e: {t: "Bayes", l: "https://seeing-theory.brown.edu", sum: "Bayes theorem updates probabilities with new data."} },
-                    { d: "Thu", m: {t: "Backprop", l: "https://youtu.be/tIeHLnjs5U8", sum: "Backprop calculates gradients for neural networks." }, e: {t: "Stats Code", l: "https://scikit-learn.org", sum: "Implement statistical tests in Python."} },
-                    { d: "Fri", m: {t: "Multi-Calc", l: "https://khanacademy.org", sum: "Multivariate calculus deals with multiple variables." }, e: {t: "Variance", l: "https://scribbr.com", sum: "Variance measures data spread."} },
-                    { d: "Sat", m: {t: "Review", l: "https://coursera.org", sum: "Review gradients and chain rule." }, e: {t: "Code GD", l: "https://towardsdatascience.com", sum: "Code a gradient descent loop from scratch."} },
-                ]
-            }
+            // PHASE 1: FOUNDATIONS
+            { title: "Week 1: Linear Algebra", days: [
+                { d: "Mon", m: {t: "Vectors", l: "https://youtu.be/fNk_zzaMoSs", s: "Vectors are ordered lists of numbers representing data points." }, e: {t: "Numpy Basics", l: "https://numpy.org/doc/stable/user/absolute_beginners.html", s: "Master Numpy arrays; they are faster than Python lists."} },
+                { d: "Tue", m: {t: "Dot Products", l: "https://youtu.be/LyGKycYT2v0", s: "Dot products measure directional similarity between vectors." }, e: {t: "Broadcasting", l: "https://jakevdp.github.io/PythonDataScienceHandbook/02.03-computation-on-arrays-ufuncs.html", s: "Perform math on entire arrays without loops."} },
+                { d: "Wed", m: {t: "Matrices", l: "https://youtu.be/kYB8IZa5AuE", s: "Matrices are machines that transform vectors (rotate/stretch)." }, e: {t: "Pandas Intro", l: "https://pandas.pydata.org/docs/user_guide/10min.html", s: "Pandas DataFrames handle tabular data like Excel."} },
+                { d: "Thu", m: {t: "Determinants", l: "https://youtu.be/Ip3X9LOh2dk", s: "Determinants show how much a matrix scales area." }, e: {t: "Data Cleaning", l: "https://realpython.com/python-data-cleaning-numpy-pandas/", s: "Clean data using dropna and fillna methods."} },
+                { d: "Fri", m: {t: "Eigenvectors", l: "https://youtu.be/PFDu9oVAE-g", s: "Eigenvectors stay on their span during transformation." }, e: {t: "Visualizing Data", l: "https://seaborn.pydata.org/tutorial/introduction.html", s: "Use Seaborn to visualize distributions and correlations."} },
+                { d: "Sat", m: {t: "Review", l: "https://www.coursera.org/learn/machine-learning-linear-algebra", s: "Consolidate your Linear Algebra knowledge." }, e: {t: "Kaggle", l: "https://kaggle.com", s: "Practice on the Titanic dataset."} }
+            ]},
+            { title: "Week 2: Calculus & Stats", days: [
+                { d: "Mon", m: {t: "Derivatives", l: "https://youtu.be/WUvTyaaNkzM", s: "Derivatives measure rate of change (slope)." }, e: {t: "Probability", l: "https://seeing-theory.brown.edu", s: "Learn dependent vs independent events."} },
+                { d: "Tue", m: {t: "Chain Rule", l: "https://youtu.be/YG15m2VwSjA", s: "Chain rule calculates derivatives of nested functions." }, e: {t: "Distributions", l: "https://seeing-theory.brown.edu/probability-distributions/", s: "Understand Normal and Binomial distributions."} },
+                { d: "Wed", m: {t: "Gradient Descent", l: "https://youtu.be/IHZwWFHWa-w", s: "Gradient Descent minimizes error by following the slope." }, e: {t: "Bayes Theorem", l: "https://seeing-theory.brown.edu/bayesian-inference/", s: "Update probabilities based on new evidence."} },
+                { d: "Thu", m: {t: "Backprop", l: "https://youtu.be/tIeHLnjs5U8", s: "Backprop is the chain rule applied to Neural Nets." }, e: {t: "Hypothesis Testing", l: "https://www.khanacademy.org/math/statistics-probability", s: "Learn P-values and significance levels."} },
+                { d: "Fri", m: {t: "Multi-Calc", l: "https://www.khanacademy.org/math/multivariable-calculus", s: "Partial derivatives for multiple variables." }, e: {t: "Variance", l: "https://www.scribbr.com/statistics/variance/", s: "Variance measures how spread out data is."} },
+                { d: "Sat", m: {t: "Review", l: "https://coursera.org", s: "Review Calculus concepts." }, e: {t: "Code GD", l: "https://towardsdatascience.com", s: "Implement Gradient Descent from scratch."} }
+            ]},
+            { title: "Week 3: Classic ML", days: [
+                { d: "Mon", m: {t: "Regression", l: "https://youtu.be/nk2CQukm59s", s: "Linear regression fits a line to data." }, e: {t: "Sklearn Basics", l: "https://scikit-learn.org/stable/getting_started.html", s: "Learn the fit() and predict() API."} },
+                { d: "Tue", m: {t: "Logistic Reg", l: "https://youtu.be/yIYKR4sgzI8", s: "Logistic regression predicts probabilities (0 to 1)." }, e: {t: "Metrics", l: "https://scikit-learn.org/stable/modules/model_evaluation.html", s: "Accuracy, Precision, Recall, and F1 Score."} },
+                { d: "Wed", m: {t: "Decision Trees", l: "https://youtu.be/7VeUPuFGJHk", s: "Trees split data based on rules." }, e: {t: "Overfitting", l: "https://elitedatascience.com/overfitting-in-machine-learning", s: "Learn to detect high variance models."} },
+                { d: "Thu", m: {t: "Random Forests", l: "https://youtu.be/J4Wdy0Wc_xQ", s: "Forests average many trees to reduce error." }, e: {t: "Ensembling", l: "https://scikit-learn.org/stable/modules/ensemble.html", s: "Bagging and Boosting techniques."} },
+                { d: "Fri", m: {t: "SVMs", l: "https://youtu.be/efR1C6CvhmE", s: "SVMs find the best boundary between classes." }, e: {t: "Kernels", l: "https://towardsdatascience.com/kernel-function-6f1d2be1391", s: "The kernel trick handles non-linear data."} },
+                { d: "Sat", m: {t: "Bias/Variance", l: "https://youtu.be/EuBBz3bI-aA", s: "Balance underfitting and overfitting." }, e: {t: "Grid Search", l: "https://scikit-learn.org/stable/modules/grid_search.html", s: "Automate hyperparameter tuning."} }
+            ]},
+            { title: "Week 4: Neural Networks", days: [
+                { d: "Mon", m: {t: "Perceptrons", l: "https://youtu.be/aircAruvnKk", s: "A perceptron is a single mathematical neuron." }, e: {t: "Build NN", l: "https://karpathy.github.io/neuralnets/", s: "Code a neuron from scratch."} },
+                { d: "Tue", m: {t: "Activation Funcs", l: "https://youtu.be/m0pIlLfpXWE", s: "ReLU adds non-linearity to the network." }, e: {t: "Softmax", l: "https://deepai.org/machine-learning-glossary-and-terms/softmax-layer", s: "Softmax converts scores to probabilities."} },
+                { d: "Wed", m: {t: "Forward Prop", l: "https://youtu.be/Ilg3gGewQ5U", s: "Pass data through the network layers." }, e: {t: "Loss Functions", l: "https://pytorch.org/docs/stable/nn.html#loss-functions", s: "Cross-entropy loss for classification."} },
+                { d: "Thu", m: {t: "Backprop Math", l: "https://youtu.be/tIeHLnjs5U8", s: "Calculus behind the learning process." }, e: {t: "PyTorch Intro", l: "https://pytorch.org/tutorials/beginner/basics/intro.html", s: "Tensors are the building blocks of PyTorch."} },
+                { d: "Fri", m: {t: "Karpathy Micrograd", l: "https://youtu.be/VMj-3S1tku0", s: "Watch Andrej build backprop from scratch." }, e: {t: "Autograd", l: "https://pytorch.org/tutorials/beginner/blitz/autograd_tutorial.html", s: "PyTorch's automatic differentiation engine."} },
+                { d: "Sat", m: {t: "Review", l: "https://coursera.org", s: "Deep Learning Specialization Week 1." }, e: {t: "MNIST Project", l: "https://pytorch.org/examples/", s: "Train a net to read handwritten digits."} }
+            ]},
+            // PHASE 2: DEEP LEARNING
+            { title: "Week 5: CNNs (Vision)", days: [
+                { d: "Mon", m: {t: "Convolutions", l: "https://youtu.be/bNb2fEVKeEo", s: "Filters detect edges and textures." }, e: {t: "Filters", l: "https://setosa.io/ev/image-kernels/", s: "Visualizing image kernels."} },
+                { d: "Tue", m: {t: "Padding/Stride", l: "https://youtu.be/3h71iZ4v7iU", s: "Controlling output size of layers." }, e: {t: "Pooling", l: "https://machinelearningmastery.com/pooling-layers-for-convolutional-neural-networks/", s: "Max pooling reduces spatial dimensions."} },
+                { d: "Wed", m: {t: "AlexNet", l: "https://youtu.be/DAOcjicFr1Y", s: "The network that started the AI boom." }, e: {t: "ImageNet", l: "https://www.image-net.org/", s: "The dataset that benchmarks vision models."} },
+                { d: "Thu", m: {t: "ResNets", l: "https://youtu.be/ZILIbUvp5lk", s: "Skip connections allow very deep networks." }, e: {t: "Transfer Learning", l: "https://pytorch.org/tutorials/beginner/transfer_learning_tutorial.html", s: "Fine-tune pre-trained models."} },
+                { d: "Fri", m: {t: "Object Detect", l: "https://youtu.be/9s_FpMpdYW8", s: "YOLO and R-CNN architectures." }, e: {t: "Data Augmentation", l: "https://pytorch.org/vision/stable/transforms.html", s: "Flipping/rotating images to boost data."} },
+                { d: "Sat", m: {t: "CS231n", l: "http://cs231n.stanford.edu/", s: "Stanford's famous vision course." }, e: {t: "CIFAR-10", l: "https://pytorch.org/tutorials/beginner/blitz/cifar10_tutorial.html", s: "Train a CNN on CIFAR-10 dataset."} }
+            ]},
+            { title: "Week 6: RNNs (Sequence)", days: [
+                { d: "Mon", m: {t: "RNN Basics", l: "https://youtu.be/6niqTuYFZZQ", s: "Networks with memory loops." }, e: {t: "Sequence Data", l: "https://distill.pub/2019/memorization-in-rnns/", s: "Handling time-series and text."} },
+                { d: "Tue", m: {t: "Vanishing Grad", l: "https://youtu.be/qO_NL7s7CJY", s: "Why standard RNNs forget long-term." }, e: {t: "LSTMs", l: "https://colah.github.io/posts/2015-08-Understanding-LSTMs/", s: "Long Short-Term Memory cells."} },
+                { d: "Wed", m: {t: "GRUs", l: "https://youtu.be/5d14727Y8tE", s: "A simplified, faster version of LSTM." }, e: {t: "Embeddings", l: "https://pytorch.org/tutorials/beginner/nlp/word_embeddings_tutorial.html", s: "Representing words as dense vectors."} },
+                { d: "Thu", m: {t: "Word2Vec", l: "https://youtu.be/4dCE1PJPmpY", s: "King - Man + Woman = Queen." }, e: {t: "TorchText", l: "https://pytorch.org/text/stable/index.html", s: "Handling text data in PyTorch."} },
+                { d: "Fri", m: {t: "Sentiment", l: "https://youtu.be/oJ-b52613_8", s: "Classifying text as positive/negative." }, e: {t: "Karpathy CharRNN", l: "http://karpathy.github.io/2015/05/21/rnn-effectiveness/", s: "Generating text character by character."} },
+                { d: "Sat", m: {t: "Makemore", l: "https://youtu.be/PaCmpygFfXo", s: "Build a name generator with Andrej." }, e: {t: "Code RNN", l: "https://github.com/karpathy/makemore", s: "Code the Makemore repository."} }
+            ]},
+            // PHASE 3: TRANSFORMERS & LLMs
+            { title: "Week 7: Transformers", days: [
+                { d: "Mon", m: {t: "Attention", l: "https://youtu.be/sysg9Yz9Wjk", s: "The mechanism that replaced RNNs." }, e: {t: "The Paper", l: "https://arxiv.org/abs/1706.03762", s: "Read 'Attention Is All You Need'."} },
+                { d: "Tue", m: {t: "Self-Attention", l: "https://youtu.be/yGTUuEx8GkA", s: "How words look at each other in a sentence." }, e: {t: "Illustrated Trans", l: "https://jalammar.github.io/illustrated-transformer/", s: "Visual guide to Transformer architecture."} },
+                { d: "Wed", m: {t: "Multi-Head", l: "https://youtu.be/mMaZK60H9Bg", s: "Attending to different parts of the sentence." }, e: {t: "Positional Enc", l: "https://kazemnejad.com/blog/transformer_architecture_positional_encoding/", s: "Giving order to the tokens."} },
+                { d: "Thu", m: {t: "Encoder-Decoder", l: "https://youtu.be/4Bdc55j80l8", s: "The original Transformer structure." }, e: {t: "Annotated Code", l: "http://nlp.seas.harvard.edu/2018/04/03/attention.html", s: "Line-by-line Transformer implementation."} },
+                { d: "Fri", m: {t: "GPT Part 1", l: "https://youtu.be/kCc8FmEb1nY", s: "Building a Decoder-only model." }, e: {t: "NanoGPT", l: "https://github.com/karpathy/nanoGPT", s: "Review Karpathy's clean GPT code."} },
+                { d: "Sat", m: {t: "BERT", l: "https://youtu.be/xI0HHN5XKDo", s: "Bidirectional Encoder for understanding." }, e: {t: "HuggingFace", l: "https://huggingface.co/learn/nlp-course/chapter1/1", s: "Intro to the Transformers library."} }
+            ]},
+            { title: "Week 8: Advanced LLMs", days: [
+                { d: "Mon", m: {t: "GPT-2/3", l: "https://youtu.be/tIzhQ6pA2nY", s: "Evolution of Generative Pre-trained Transformers." }, e: {t: "Scaling Laws", l: "https://arxiv.org/abs/2001.08361", s: "Compute vs Data scaling (Kaplan/Chinchilla)."} },
+                { d: "Tue", m: {t: "Tokenization", l: "https://youtu.be/zDu3xcn2KKk", s: "BPE, WordPiece, and SentencePiece." }, e: {t: "HF Tokenizers", l: "https://huggingface.co/docs/tokenizers/index", s: "Using the fast Rust-based tokenizers."} },
+                { d: "Wed", m: {t: "Fine-Tuning", l: "https://youtu.be/eC6Hd1h_vos", s: "Adapting base models to specific tasks." }, e: {t: "LoRA/PEFT", l: "https://arxiv.org/abs/2106.09685", s: "Low-Rank Adaptation for efficient training."} },
+                { d: "Thu", m: {t: "RLHF", l: "https://youtu.be/2MBJOuVkkjE", s: "Reinforcement Learning from Human Feedback." }, e: {t: "InstructGPT", l: "https://openai.com/research/instruction-following", s: "Making models follow instructions."} },
+                { d: "Fri", m: {t: "Llama & Open Src", l: "https://youtu.be/zB5A6N0J1rE", s: "The rise of powerful open weights models." }, e: {t: "Quantization", l: "https://huggingface.co/blog/4bit-transformers-bitsandbytes", s: "Running models on consumer hardware (4-bit)."} },
+                { d: "Sat", m: {t: "Build GPT Part 2", l: "https://youtu.be/kCc8FmEb1nY", s: "Finish the NanoGPT build." }, e: {t: "Run Llama", l: "https://github.com/ggerganov/llama.cpp", s: "Run LLMs locally on CPU/Mac."} }
+            ]},
+            // PHASE 4: DEPLOYMENT & ADVANCED
+            { title: "Week 9: RAG & Vector DBs", days: [
+                { d: "Mon", m: {t: "What is RAG?", l: "https://youtu.be/T-D1OfcDW1M", s: "Retrieval Augmented Generation explained." }, e: {t: "Vector DBs", l: "https://www.pinecone.io/learn/vector-database/", s: "Storing embeddings for fast retrieval."} },
+                { d: "Tue", m: {t: "Embeddings", l: "https://youtu.be/5s7C8A4_sLg", s: "Converting text to semantic vectors." }, e: {t: "LangChain", l: "https://python.langchain.com/docs/get_started/introduction", s: "Orchestrating LLM workflows."} },
+                { d: "Wed", m: {t: "LlamaIndex", l: "https://youtu.be/N609_w42rR8", s: "Data framework for LLM applications." }, e: {t: "Faiss", l: "https://github.com/facebookresearch/faiss", s: "Facebook's library for similarity search."} },
+                { d: "Thu", m: {t: "Building RAG", l: "https://youtu.be/wfp50x51tqA", s: "Coding a Chat with PDF app." }, e: {t: "Hybrid Search", l: "https://weaviate.io/blog/hybrid-search-explained", s: "Combining keyword and vector search."} },
+                { d: "Fri", m: {t: "Evaluation", l: "https://youtu.be/q1_eJk3_d7c", s: "RAGAS: Evaluating RAG pipelines." }, e: {t: "Advanced RAG", l: "https://arxiv.org/abs/2312.10997", s: "Techniques like Self-RAG and Rewrite-Retrieve."} },
+                { d: "Sat", m: {t: "Project", l: "https://github.com/mayooear/gpt4-pdf-chatbot-langchain", s: "Build a full stack RAG application." }, e: {t: "Deploy", l: "https://streamlit.io/", s: "Host your app using Streamlit."} }
+            ]},
+            { title: "Week 10: MLOps & Serving", days: [
+                { d: "Mon", m: {t: "MLOps Intro", l: "https://youtu.be/06-AZXmwHjo", s: "DevOps principles applied to Machine Learning." }, e: {t: "Docker", l: "https://docker-curriculum.com/", s: "Containerizing your models."} },
+                { d: "Tue", m: {t: "FastAPI", l: "https://youtu.be/SORiTsvnU28", s: "Building high-performance APIs for ML." }, e: {t: "TorchServe", l: "https://pytorch.org/serve/", s: "Serving PyTorch models in production."} },
+                { d: "Wed", m: {t: "Monitoring", l: "https://youtu.be/D0hI_8P90B4", s: "Detecting data drift and model decay." }, e: {t: "Prometheus", l: "https://prometheus.io/", s: "Metrics monitoring tool."} },
+                { d: "Thu", m: {t: "CI/CD for ML", l: "https://youtu.be/K1V_W5E2gBo", s: "Automating model testing and deployment." }, e: {t: "GitHub Actions", l: "https://github.com/features/actions", s: "Workflows for your repo."} },
+                { d: "Fri", m: {t: "Feature Stores", l: "https://youtu.be/7x1j5p4q2uM", s: "Managing features for training and inference." }, e: {t: "Feast", l: "https://feast.dev/", s: "Open source feature store."} },
+                { d: "Sat", m: {t: "Kubernetes", l: "https://youtu.be/d6WC5n9G_sM", s: "Orchestrating containers at scale." }, e: {t: "KServe", l: "https://kserve.github.io/website/", s: "Serverless inference on Kubernetes."} }
+            ]},
+            { title: "Week 11: System Design", days: [
+                { d: "Mon", m: {t: "Intro", l: "https://youtu.be/Gq_6sX9gqZM", s: "The 4-step framework for ML design interviews." }, e: {t: "ByteByteGo", l: "https://bytebytego.com/", s: "Read Alex Xu's ML System Design chapters."} },
+                { d: "Tue", m: {t: "RecSys", l: "https://youtu.be/v_m3wP7k7jI", s: "Designing Netflix/Spotify recommendation engines." }, e: {t: "Two-Tower", l: "https://cloud.google.com/vertex-ai/docs/matching-engine/train-embeddings-two-tower", s: "Retrieval vs Ranking stages."} },
+                { d: "Wed", m: {t: "Search", l: "https://youtu.be/1K5S6YqJ4tA", s: "Designing search ranking for Airbnb/Amazon." }, e: {t: "Learning to Rank", l: "https://en.wikipedia.org/wiki/Learning_to_rank", s: "Pointwise, Pairwise, Listwise approaches."} },
+                { d: "Thu", m: {t: "Ads Ranking", l: "https://youtu.be/Pr0w5T_n6p0", s: "Predicting Click-Through-Rate (CTR) at scale." }, e: {t: "Feature Crossing", l: "https://developers.google.com/machine-learning/crash-course/feature-crosses/video-lecture", s: "Combining features for non-linearity."} },
+                { d: "Fri", m: {t: "Video Recs", l: "https://youtu.be/733m6qBH-jI", s: "YouTube's deep neural network architecture." }, e: {t: "Watch Time", l: "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/45530.pdf", s: "Optimizing for engagement, not just clicks."} },
+                { d: "Sat", m: {t: "News Feed", l: "https://youtu.be/Nb3sB_I5WJc", s: "Designing the Facebook/Instagram feed." }, e: {t: "Primer", l: "https://github.com/donnemartin/system-design-primer", s: "Review general system design concepts."} }
+            ]},
+            { title: "Week 12: AI Agents", days: [
+                { d: "Mon", m: {t: "Agents Intro", l: "https://youtu.be/fqVLjtvWAYq", s: "From Chatbots to Autonomous Agents." }, e: {t: "ReAct Paper", l: "https://arxiv.org/abs/2210.03629", s: "Reasoning + Acting pattern."} },
+                { d: "Tue", m: {t: "Tool Use", l: "https://youtu.be/N8i-9A8_3nE", s: "Teaching LLMs to use APIs and calculators." }, e: {t: "Function Calling", l: "https://platform.openai.com/docs/guides/function-calling", s: "OpenAI's structured output for tools."} },
+                { d: "Wed", m: {t: "AutoGPT", l: "https://youtu.be/5SgJKZLBrmg", s: "Recursive loops for goal achievement." }, e: {t: "BabyAGI", l: "https://github.com/yoheinakajima/babyagi", s: "Task creation and prioritization loops."} },
+                { d: "Thu", m: {t: "Multi-Agent", l: "https://youtu.be/2hP_y7_t3aM", s: "Systems like Camel and AutoGen." }, e: {t: "AutoGen", l: "https://microsoft.github.io/autogen/", s: "Microsoft's framework for multiple agents."} },
+                { d: "Fri", m: {t: "Memory", l: "https://youtu.be/1yv96yT2aCg", s: "Short-term vs Long-term memory in agents." }, e: {t: "MemGPT", l: "https://memgpt.ai/", s: "OS-like memory management for LLMs."} },
+                { d: "Sat", m: {t: "Agent Project", l: "https://youtu.be/bd_W_jL2B1Q", s: "Build a research agent with LangChain." }, e: {t: "Evaluation", l: "https://arxiv.org/abs/2308.03688", s: "AgentBench: Evaluating agent performance."} }
+            ]},
+            // PHASE 5: INTERVIEW PREP
+            { title: "Week 13: Coding Prep", days: [
+                { d: "Mon", m: {t: "Arrays/Strings", l: "https://leetcode.com/studyplan/top-interview-150/", s: "Two pointers, sliding window." }, e: {t: "NeetCode", l: "https://neetcode.io/", s: "Video explanations for LeetCode."} },
+                { d: "Tue", m: {t: "LinkedLists", l: "https://leetcode.com/tag/linked-list/", s: "Reversal, cycle detection." }, e: {t: "Floyd's Algo", l: "https://en.wikipedia.org/wiki/Cycle_detection", s: "Tortoise and Hare algorithm."} },
+                { d: "Wed", m: {t: "Trees/Graphs", l: "https://leetcode.com/tag/tree/", s: "BFS, DFS, and traversals." }, e: {t: "Graph Theory", l: "https://www.geeksforgeeks.org/graph-data-structure-and-algorithms/", s: "Adjacency lists and matrices."} },
+                { d: "Thu", m: {t: "DP & Greedy", l: "https://leetcode.com/tag/dynamic-programming/", s: "Memoization and tabulation." }, e: {t: "Knapsack", l: "https://en.wikipedia.org/wiki/Knapsack_problem", s: "Classic DP problem pattern."} },
+                { d: "Fri", m: {t: "ML Coding", l: "https://github.com/MyCrazyCat/ML-Interview", s: "Implement K-Means, KNN from scratch." }, e: {t: "Matrix Ops", l: "https://leetcode.com/tag/matrix/", s: "Rotations and traversals."} },
+                { d: "Sat", m: {t: "Mock Test", l: "https://leetcode.com/contest/", s: "Simulate a timed contest." }, e: {t: "Review", l: "https://leetcode.com/discuss/interview-experience/", s: "Read recent interview experiences."} }
+            ]},
+            { title: "Week 14: Mock Interviews", days: [
+                { d: "Mon", m: {t: "Behavioral", l: "https://www.techinterviewhandbook.org/behavioral-interview-questions/", s: "Prepare your STAR stories." }, e: {t: "Amazon LPs", l: "https://www.amazon.jobs/en/principles", s: "Leadership Principles for Amazon."} },
+                { d: "Tue", m: {t: "Googleness", l: "https://careers.google.com/how-we-hire/", s: "Understanding Google's culture." }, e: {t: "Meta Culture", l: "https://www.metacareers.com/culture/", s: "Move fast and break things."} },
+                { d: "Wed", m: {t: "System Design", l: "https://youtu.be/i7twT3x5yv8", s: "Mock interview: Design Twitter." }, e: {t: "ML Design", l: "https://youtu.be/Kz1F4W2_T7U", s: "Mock interview: Design YouTube."} },
+                { d: "Thu", m: {t: "Coding Mock", l: "https://pramp.com/", s: "Peer-to-peer mock interviews." }, e: {t: "Reflections", l: "https://medium.com/tag/interview-experience", s: "Learn from others' mistakes."} },
+                { d: "Fri", m: {t: "Resume", l: "https://www.techinterviewhandbook.org/resume-guide/", s: "Optimize for ATS and readability." }, e: {t: "Portfolio", l: "https://github.com/", s: "Clean up your GitHub pinned projects."} },
+                { d: "Sat", m: {t: "Negotiation", l: "https://www.levels.fyi/", s: "Know your worth." }, e: {t: "Apply", l: "https://www.linkedin.com/", s: "Send out applications."} }
+            ]},
+            { title: "Week 15: Deep Dive I", days: [
+                { d: "Mon", m: {t: "Diffusion", l: "https://youtu.be/HoKDTa5jHvg", s: "How Stable Diffusion works." }, e: {t: "DDPM Paper", l: "https://arxiv.org/abs/2006.11239", s: "Denoising Diffusion Probabilistic Models."} },
+                { d: "Tue", m: {t: "Multimodal", l: "https://youtu.be/5p4-r_3M_5s", s: "CLIP: Connecting Text and Images." }, e: {t: "Flamingo", l: "https://arxiv.org/abs/2204.14198", s: "Visual Language Models."} },
+                { d: "Wed", m: {t: "Audio", l: "https://youtu.be/US3d97e5iT4", s: "Whisper: Robust Speech Recognition." }, e: {t: "Spectrograms", l: "https://pytorch.org/audio/stable/tutorials/audio_feature_extractions_tutorial.html", s: "Processing audio data."} },
+                { d: "Thu", m: {t: "Graph NNs", l: "https://youtu.be/ABCD123456", s: "Learning on non-euclidean data." }, e: {t: "PyG", l: "https://pytorch-geometric.readthedocs.io/", s: "PyTorch Geometric library."} },
+                { d: "Fri", m: {t: "Reinforcement", l: "https://youtu.be/zR11FLZ-O9M", s: "Intro to RL concepts (Agent/Env)." }, e: {t: "PPO", l: "https://arxiv.org/abs/1707.06347", s: "Proximal Policy Optimization."} },
+                { d: "Sat", m: {t: "AlphaGo", l: "https://youtu.be/8tq1C8spV_g", s: "The documentary that changed AI." }, e: {t: "MuZero", l: "https://deepmind.google/discover/blog/muzero-mastering-go-chess-shogi-and-atari-without-rules/", s: "Learning without rules."} }
+            ]},
+            { title: "Week 16: Final Projects", days: [
+                { d: "Mon", m: {t: "Capstone 1", l: "https://github.com/", s: "Start your LLM-based SaaS idea." }, e: {t: "Planning", l: "https://trello.com/", s: "Plan features and architecture."} },
+                { d: "Tue", m: {t: "Development", l: "https://vscode.dev/", s: "Core implementation day." }, e: {t: "Testing", l: "https://docs.pytest.org/", s: "Write unit tests for robustness."} },
+                { d: "Wed", m: {t: "Frontend", l: "https://react.dev/", s: "Build the UI for your model." }, e: {t: "Integration", l: "https://fastapi.tiangolo.com/", s: "Connect UI to Backend API."} },
+                { d: "Thu", m: {t: "Deployment", l: "https://vercel.com/", s: "Deploy frontend and backend." }, e: {t: "Demo", l: "https://www.loom.com/", s: "Record a demo video."} },
+                { d: "Fri", m: {t: "Documentation", l: "https://github.com/features/issues", s: "Write a great README." }, e: {t: "Share", l: "https://twitter.com/", s: "Post your project on socials."} },
+                { d: "Sat", m: {t: "Celebration", l: "https://open.spotify.com/", s: "You made it! Relax and enjoy." }, e: {t: "Next Steps", l: "https://roadmap.sh/ai-engineer", s: "Plan your career trajectory."} }
+            ]}
         ];
 
         function App() {
-            const [weekIdx, setWeekIdx] = useState(() => {
-                try { return parseInt(localStorage.getItem('faang_week')) || 0; } catch { return 0; }
-            });
+            const [weekIdx, setWeekIdx] = useState(() => parseInt(localStorage.getItem('faang_w')) || 0);
             const [dayIdx, setDayIdx] = useState(0);
-            const [completed, setCompleted] = useState(() => {
-                try { return JSON.parse(localStorage.getItem('faang_done')) || []; } catch { return []; }
-            });
+            const [completed, setCompleted] = useState(() => JSON.parse(localStorage.getItem('faang_d')) || []);
             const [speaking, setSpeaking] = useState(false);
 
-            const currentWeek = curriculum[weekIdx] || curriculum[0];
-            const currentDay = currentWeek.days[dayIdx] || currentWeek.days[0];
+            useEffect(() => { localStorage.setItem('faang_w', weekIdx); }, [weekIdx]);
+            useEffect(() => { localStorage.setItem('faang_d', JSON.stringify(completed)); }, [completed]);
+
+            const curW = curriculum[weekIdx] || curriculum[0];
+            const curD = curW.days[dayIdx] || curW.days[0];
             const mId = `w${weekIdx}d${dayIdx}m`;
             const eId = `w${weekIdx}d${dayIdx}e`;
 
-            // --- AUDIO ---
             const speak = (text) => {
-                if (!window.speechSynthesis) return;
                 window.speechSynthesis.cancel();
                 if (speaking) { setSpeaking(false); return; }
                 const u = new SpeechSynthesisUtterance(text);
@@ -98,146 +196,98 @@
                 setSpeaking(true);
             };
 
-            // --- ANDROID DOWNLOAD SYNC ---
-            const syncWeek = () => {
-                const events = [];
+            // --- SAMSUNG-SAFE ICS GENERATOR ---
+            const downloadICS = () => {
                 const now = new Date();
-                
-                // Start schedule from TODAY
-                currentWeek.days.forEach((dayData, index) => {
-                    const eventDate = new Date(now);
-                    eventDate.setDate(now.getDate() + index);
-                    
-                    const fmt = (d, h) => {
-                        const date = new Date(d);
-                        date.setHours(h,0,0);
-                        return date.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+                const events = [];
+                curW.days.forEach((d, i) => {
+                    const date = new Date(now);
+                    date.setDate(now.getDate() + i);
+                    const fmt = (dt, h) => {
+                        const x = new Date(dt); x.setHours(h,0,0);
+                        return x.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
                     };
-
-                    // Morning
-                    events.push(`BEGIN:VEVENT\nSUMMARY:AI Study: ${dayData.m.t}\nDTSTART:${fmt(eventDate, 11)}\nDTEND:${fmt(eventDate, 13)}\nDESCRIPTION:Link: ${dayData.m.l}\nEND:VEVENT`);
-                    // Evening
-                    events.push(`BEGIN:VEVENT\nSUMMARY:AI Lab: ${dayData.e.t}\nDTSTART:${fmt(eventDate, 18)}\nDTEND:${fmt(eventDate, 20)}\nDESCRIPTION:Link: ${dayData.e.l}\nEND:VEVENT`);
+                    // Minimalist ICS format for compatibility
+                    events.push(`BEGIN:VEVENT\nDTSTART:${fmt(date, 11)}\nDTEND:${fmt(date, 13)}\nSUMMARY:${d.m.t}\nDESCRIPTION:${d.m.l}\nEND:VEVENT`);
+                    events.push(`BEGIN:VEVENT\nDTSTART:${fmt(date, 18)}\nDTEND:${fmt(date, 20)}\nSUMMARY:${d.e.t}\nDESCRIPTION:${d.e.l}\nEND:VEVENT`);
                 });
-
-                const icsContent = `BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//FAANG AI//EN\n${events.join("\n")}\nEND:VCALENDAR`;
+                const ics = `BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//FAANG//EN\n${events.join("\n")}\nEND:VCALENDAR`;
                 
-                // FORCE DOWNLOAD (Android Reliable Method)
-                const element = document.createElement('a');
-                const file = new Blob([icsContent], {type: 'text/calendar'});
-                element.href = URL.createObjectURL(file);
-                element.download = `FAANG_Week_${weekIdx + 1}.ics`;
-                document.body.appendChild(element); // Required for this to work in FireFox
-                element.click();
-                document.body.removeChild(element);
-
-                alert("File Downloaded! \n\n1. Tap 'Open' in your notifications.\n2. Select 'Google Calendar' to import all events.");
+                // Force direct download
+                const a = document.createElement('a');
+                a.href = "data:text/calendar;charset=utf-8," + encodeURIComponent(ics);
+                a.download = "study_schedule.ics";
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
             };
 
-            const toggle = (id) => {
-                const next = completed.includes(id) ? completed.filter(x => x !== id) : [...completed, id];
-                setCompleted(next);
-                localStorage.setItem('faang_done', JSON.stringify(next));
-            };
-
-            useEffect(() => {
-                localStorage.setItem('faang_week', weekIdx);
-            }, [weekIdx]);
-
-            // Google Calendar Direct Link (For single event fallback)
-            const getDirectLink = (title, isMorning) => {
-                 const now = new Date();
-                 const h = isMorning ? 11 : 18;
-                 // If today is past the time, assume tomorrow, otherwise today
-                 if (now.getHours() >= h) now.setDate(now.getDate() + 1);
-                 
-                 now.setHours(h, 0, 0, 0);
-                 const start = now.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
-                 const end = new Date(now.getTime() + 2 * 60 * 60 * 1000).toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
-                 
-                 return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent("AI: " + title)}&dates=${start}/${end}`;
-            };
-
-            const progress = Math.round((completed.length / (curriculum.length * 12)) * 100) || 0;
+            // Fallback Single Event Link
+            const getLink = (t) => {
+                const d = new Date().toISOString().replace(/-|:|\.\d\d\d/g,"");
+                return `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent("Study: "+t)}&dates=${d}/${d}`;
+            }
 
             return (
                 <div className="min-h-screen pb-safe">
-                    {/* Header */}
-                    <div className="bg-slate-900 text-white p-6 rounded-b-[2rem] shadow-xl sticky top-0 z-10">
+                    {/* HEADER */}
+                    <div className="bg-slate-900 text-white p-6 rounded-b-3xl shadow-xl sticky top-0 z-10">
                         <div className="flex justify-between items-center mb-4">
-                            <div>
-                                <h1 className="text-2xl font-bold text-blue-400">FAANG Path</h1>
-                                <p className="text-xs text-slate-400">Progress: {progress}%</p>
-                            </div>
-                            
-                            <div className="flex items-center gap-2 bg-slate-800 px-3 py-1 rounded-lg">
-                                <button onClick={() => setWeekIdx(Math.max(0, weekIdx - 1))} disabled={weekIdx===0} className="disabled:opacity-30">←</button>
-                                <span className="font-mono font-bold">W{weekIdx + 1}</span>
-                                <button onClick={() => setWeekIdx(Math.min(curriculum.length-1, weekIdx + 1))} disabled={weekIdx===curriculum.length-1} className="disabled:opacity-30">→</button>
+                            <h1 className="text-2xl font-bold text-blue-400">FAANG Path</h1>
+                            <div className="bg-slate-800 px-3 py-1 rounded flex gap-3">
+                                <button onClick={() => setWeekIdx(Math.max(0, weekIdx-1))} disabled={weekIdx===0}>←</button>
+                                <span>Week {weekIdx+1}</span>
+                                <button onClick={() => setWeekIdx(Math.min(curriculum.length-1, weekIdx+1))}>→</button>
                             </div>
                         </div>
-
-                        {/* SYNC BUTTON */}
-                        <button onClick={syncWeek} className="w-full mb-4 bg-gradient-to-r from-blue-600 to-cyan-600 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-transform">
-                            <Icons.Calendar/> Download Week Schedule
+                        
+                        {/* Samsung-Safe Sync Button */}
+                        <button onClick={downloadICS} className="w-full bg-blue-600 py-2 rounded-lg font-bold text-sm flex justify-center items-center gap-2 mb-4">
+                            <Icons.Cal/> Add This Week to Calendar
                         </button>
 
                         {/* Day Tabs */}
-                        <div className="flex gap-2 overflow-x-auto hide-scrollbar pb-1">
-                            {currentWeek.days.map((d, i) => (
-                                <button key={i} onClick={() => { setDayIdx(i); window.speechSynthesis.cancel(); setSpeaking(false); }} 
-                                    className={`px-4 py-2 rounded-lg font-bold text-sm transition-all ${dayIdx === i ? 'bg-white text-slate-900' : 'bg-slate-800 text-slate-400'}`}>
+                        <div className="flex gap-2 overflow-x-auto hide-scrollbar">
+                            {curW.days.map((d,i) => (
+                                <button key={i} onClick={()=>{setDayIdx(i); setSpeaking(false); window.speechSynthesis.cancel()}} 
+                                    className={`px-4 py-2 rounded-lg font-bold text-sm ${dayIdx===i ? 'bg-white text-slate-900' : 'bg-slate-800 text-slate-400'}`}>
                                     {d.d}
                                 </button>
                             ))}
                         </div>
                     </div>
 
-                    {/* Content */}
+                    {/* CONTENT */}
                     <div className="p-5 space-y-6">
-                        
                         {/* Morning */}
-                        <div className={`bg-white p-5 rounded-2xl shadow-sm border-l-4 border-orange-400 ${completed.includes(mId) ? 'opacity-50' : ''}`}>
+                        <div className={`bg-white p-5 rounded-2xl shadow-sm border-l-4 border-orange-400 ${completed.includes(mId)?'opacity-50':''}`}>
                             <div className="flex justify-between items-center mb-2">
-                                <span className="text-xs font-bold text-orange-500 uppercase tracking-wider flex items-center gap-1"><Icons.Sun/> Morning</span>
-                                <a href={getDirectLink(currentDay.m.t, true)} target="_blank" className="text-slate-300"><Icons.Alarm/></a>
+                                <span className="text-orange-500 font-bold text-xs flex items-center gap-1"><Icons.Sun/> MORNING</span>
+                                <a href={getLink(curD.m.t)} target="_blank" className="text-slate-300"><Icons.Alarm/></a>
                             </div>
-                            <h2 className="text-lg font-bold text-slate-800 mb-1">{currentDay.m.t}</h2>
-                            
-                            <div className="flex gap-2 mt-4">
-                                <button onClick={() => speak(currentDay.m.sum)} className={`flex-1 py-2 rounded-lg flex items-center justify-center gap-2 text-sm font-bold border ${speaking ? 'bg-orange-50 border-orange-200 text-orange-600' : 'bg-white border-slate-200 text-slate-600'}`}>
-                                    {speaking ? <Icons.Stop/> : <Icons.Play/>} Audio
+                            <h2 className="text-xl font-bold text-slate-800 mb-2">{curD.m.t}</h2>
+                            <div className="flex gap-2">
+                                <button onClick={()=>speak(curD.m.s)} className={`flex-1 py-2 rounded-lg font-bold text-sm border flex justify-center items-center gap-2 ${speaking ? 'bg-orange-50 text-orange-600 border-orange-200' : 'bg-white text-slate-600'}`}>
+                                    {speaking?<Icons.Stop/>:<Icons.Play/>} Listen
                                 </button>
-                                <a href={currentDay.m.l} target="_blank" className="flex-1 py-2 bg-orange-50 text-orange-600 rounded-lg flex items-center justify-center gap-2 text-sm font-bold">
-                                    View
-                                </a>
-                                <button onClick={() => toggle(mId)} className={`w-10 rounded-lg border-2 flex items-center justify-center ${completed.includes(mId) ? 'bg-green-500 border-green-500 text-white' : 'border-slate-200 text-slate-300'}`}>
-                                    <Icons.Check/>
-                                </button>
+                                <a href={curD.m.l} target="_blank" className="flex-1 py-2 bg-orange-50 text-orange-600 rounded-lg font-bold text-sm flex justify-center items-center">View</a>
+                                <button onClick={()=>{setCompleted(p=>p.includes(mId)?p.filter(x=>x!==mId):[...p,mId])}} className={`w-12 rounded-lg border-2 flex justify-center items-center ${completed.includes(mId)?'bg-green-500 text-white border-green-500':'text-slate-300'}`}><Icons.Check/></button>
                             </div>
                         </div>
 
                         {/* Evening */}
-                        <div className={`bg-white p-5 rounded-2xl shadow-sm border-l-4 border-indigo-500 ${completed.includes(eId) ? 'opacity-50' : ''}`}>
+                        <div className={`bg-white p-5 rounded-2xl shadow-sm border-l-4 border-indigo-500 ${completed.includes(eId)?'opacity-50':''}`}>
                             <div className="flex justify-between items-center mb-2">
-                                <span className="text-xs font-bold text-indigo-500 uppercase tracking-wider flex items-center gap-1"><Icons.Moon/> Evening</span>
-                                <a href={getDirectLink(currentDay.e.t, false)} target="_blank" className="text-slate-300"><Icons.Alarm/></a>
+                                <span className="text-indigo-500 font-bold text-xs flex items-center gap-1"><Icons.Moon/> EVENING</span>
+                                <a href={getLink(curD.e.t)} target="_blank" className="text-slate-300"><Icons.Alarm/></a>
                             </div>
-                            <h2 className="text-lg font-bold text-slate-800 mb-1">{currentDay.e.t}</h2>
-                            
-                            <div className="flex gap-2 mt-4">
-                                <button onClick={() => speak(currentDay.e.sum)} className="flex-1 py-2 bg-white text-slate-600 border border-slate-200 rounded-lg flex items-center justify-center gap-2 text-sm font-bold">
-                                    <Icons.Play/> Audio
-                                </button>
-                                <a href={currentDay.e.l} target="_blank" className="flex-1 py-2 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center gap-2 text-sm font-bold">
-                                    Read
-                                </a>
-                                <button onClick={() => toggle(eId)} className={`w-10 rounded-lg border-2 flex items-center justify-center ${completed.includes(eId) ? 'bg-green-500 border-green-500 text-white' : 'border-slate-200 text-slate-300'}`}>
-                                    <Icons.Check/>
-                                </button>
+                            <h2 className="text-xl font-bold text-slate-800 mb-2">{curD.e.t}</h2>
+                            <div className="flex gap-2">
+                                <button onClick={()=>speak(curD.e.s)} className="flex-1 py-2 bg-white border text-slate-600 rounded-lg font-bold text-sm flex justify-center items-center gap-2"><Icons.Play/> Listen</button>
+                                <a href={curD.e.l} target="_blank" className="flex-1 py-2 bg-indigo-50 text-indigo-600 rounded-lg font-bold text-sm flex justify-center items-center">Read</a>
+                                <button onClick={()=>{setCompleted(p=>p.includes(eId)?p.filter(x=>x!==eId):[...p,eId])}} className={`w-12 rounded-lg border-2 flex justify-center items-center ${completed.includes(eId)?'bg-green-500 text-white border-green-500':'text-slate-300'}`}><Icons.Check/></button>
                             </div>
                         </div>
-
                     </div>
                 </div>
             );
